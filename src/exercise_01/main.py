@@ -1,25 +1,31 @@
+import time
+
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-import time
-
-from pose_vector_to_transformation_matrix import \
-    pose_vector_to_transformation_matrix
+from pose_vector_to_transformation_matrix import pose_vector_to_transformation_matrix
 from project_points import project_points
 from undistort_image import undistort_image
 from undistort_image_vectorized import undistort_image_vectorized
 
 
+def load_poses(filename: str) -> np.ndarray:
+    """
+    Load camera poses. Dimensions: [736, 6]
+
+    Each row i of matrix 'poses' contains the transformations that transforms
+    points expressed in the world frame to points expressed in the camera frame.
+
+    Each row: (w_x, w_y, w_z, t_x, t_y, t_z), where
+    w: axis-angle representation
+    t: translation in meters
+    """
+
+    return np.loadtxt(filename, delimiter=",")
+
+
 def main():
-    pass
-
-    # load camera poses
-
-    # each row i of matrix 'poses' contains the transformations that transforms
-    # points expressed in the world frame to
-    # points expressed in the camera frame
-
-    # TODO: Your code here
+    poses = load_poses("./data/poses.txt/")
 
     # define 3D corner positions
     # [Nx3] matrix containing the corners of the checkerboard as 3D points
@@ -33,13 +39,11 @@ def main():
     # load one image with a given index
     # TODO: Your code here
 
-
     # project the corners on the image
     # compute the 4x4 homogeneous transformation matrix that maps points
     # from the world to the camera coordinate frame
 
     # TODO: Your code here
-
 
     # transform 3d points from world to current camera pose
     # TODO: Your code here
@@ -71,7 +75,7 @@ def main():
 
     # calculate the cube points to then draw the image
     # TODO: Your code here
-    
+
     # Plot the cube
     """ Remove this comment if you have completed the code until here
     plt.clf()

@@ -24,25 +24,46 @@ def load_poses(filename: str) -> np.ndarray:
     return np.loadtxt(filename, delimiter=",")
 
 
+def load_camera_intrinsics(
+    K_filename: str, D_filename: str
+) -> tuple[np.ndarray, np.ndarray]:
+    return (
+        np.loadtxt(K_filename, delimiter=","),
+        np.loadtxt(D_filename, delimiter=","),
+    )
+
+
+def generate_3D_corner_positions() -> np.ndarray:
+    """
+    Corner positions in checkerboard.
+
+    Returns:
+        M: matrix of corners of the checkerboard as 3D points (X, Y, Z) expressed
+        in the world coordinate system (Nx3)
+    """
+    nx, ny = (9, 6)
+    x_arr = np.linspace(0, 32, nx)
+    y_arr = np.linspace(0, 20, ny)
+    matrix = [[x, y, 0] for x in x_arr for y in y_arr]
+    return np.array(matrix)
+
+
+def load_img(filename: str):
+    return cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+
+
 def main():
     poses = load_poses("./data/poses.txt/")
 
-    # define 3D corner positions
-    # [Nx3] matrix containing the corners of the checkerboard as 3D points
-    # (X,Y,Z), expressed in the world coordinate system
+    corners = generate_3D_corner_positions()
 
-    # TODO: Your code here
+    K, D = load_camera_intrinsics("./data/K.txt", "./data/D.txt")
 
-    # load camera intrinsics
-    # TODO: Your code here
-
-    # load one image with a given index
-    # TODO: Your code here
+    img = load_img("./data/images/img_0001.jpg")
 
     # project the corners on the image
     # compute the 4x4 homogeneous transformation matrix that maps points
     # from the world to the camera coordinate frame
-
     # TODO: Your code here
 
     # transform 3d points from world to current camera pose

@@ -21,15 +21,15 @@ def load_poses(filename: str) -> np.ndarray:
     t: translation in meters
     """
 
-    return np.loadtxt(filename, delimiter=",")
+    return np.loadtxt(filename)
 
 
 def load_camera_intrinsics(
     K_filename: str, D_filename: str
 ) -> tuple[np.ndarray, np.ndarray]:
     return (
-        np.loadtxt(K_filename, delimiter=","),
-        np.loadtxt(D_filename, delimiter=","),
+        np.loadtxt(K_filename),
+        np.loadtxt(D_filename),
     )
 
 
@@ -44,7 +44,7 @@ def generate_3D_corner_positions() -> np.ndarray:
     nx, ny = (9, 6)
     x_arr = np.linspace(0, 32, nx)
     y_arr = np.linspace(0, 20, ny)
-    matrix = [[x, y, 0] for x in x_arr for y in y_arr]
+    matrix = [[x, y, 0, 1] for x in x_arr for y in y_arr]
     return np.array(matrix)
 
 
@@ -53,21 +53,37 @@ def load_img(filename: str):
 
 
 def main():
-    poses = load_poses("./data/poses.txt/")
+    poses = load_poses("./data/poses.txt")
 
-    corners = generate_3D_corner_positions()
+    corners_world = generate_3D_corner_positions()
 
     K, D = load_camera_intrinsics("./data/K.txt", "./data/D.txt")
 
     img = load_img("./data/images/img_0001.jpg")
+    img_undistorted = load_img("./data/images_undistorted/img_0001.jpg")
 
     # project the corners on the image
     # compute the 4x4 homogeneous transformation matrix that maps points
     # from the world to the camera coordinate frame
-    # TODO: Your code here
+    transformation_matrix = pose_vector_to_transformation_matrix(poses[0])
 
     # transform 3d points from world to current camera pose
-    # TODO: Your code here
+    # projected_points = project_points(corners, K, D)
+    N = corners_world.shape[1]
+    ones = np.ones((1, N))
+
+    # corners_world_homogenous = np.vstack([corners_world, ones])
+    # print(corners_world_homogenous)
+    corners_camera_homogenous = np.matmul(
+        K, np.matmul(transformation_matrix, corners_world[0])
+    )
+    print(corners_camera_homogenous)
+
+    plt.imshow(img_undistorted, cmap="gray")
+    plt.plot(
+        corners_camera_homogenous[0], corners_camera_homogenous[1], "or", markersize=10
+    )
+    plt.show()
 
     # undistort image with bilinear interpolation
     """ Remove this comment if you have completed the code until here

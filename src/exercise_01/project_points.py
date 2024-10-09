@@ -1,11 +1,8 @@
 import numpy as np
-
 from distort_points import distort_points
 
 
-def project_points(points_3d: np.ndarray,
-                   K: np.ndarray,
-                   D: np.ndarray) -> np.ndarray:
+def project_points(points_3d: np.ndarray, K: np.ndarray, D: np.ndarray) -> np.ndarray:
     """
     Projects 3d points to the image plane, given the camera matrix,
     and distortion coefficients.
@@ -18,5 +15,7 @@ def project_points(points_3d: np.ndarray,
     Returns:
         projected_points: 2d points (2xN)
     """
-    pass
-    # TODO: Your code here
+    # N = points_3d.shape[1]
+    # ones = np.ones((1, N))
+    # points_3d_homogenous = np.vstack(points_3d, ones)
+    # np.matmul()

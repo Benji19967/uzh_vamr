@@ -32,22 +32,22 @@ def main():
     D = utils.load_distortion_coefficients(D_filename=FILENAME_DISTORTION_COEFFICIENTS)
     img_undistorted = utils.load_img(FILENAME_UNDISTORTED_IMAGE)
 
-    # PART 1 -- Projection
-    project_and_superimpose_corners_onto_img(
-        pose_vec=poses_vec[0],
-        img=img_undistorted,
-        K=K,
-    )
-
-    # PART 1 -- Cube
-    draw_cube(
-        pose_vec=poses_vec[0],
-        img_undistorted=img_undistorted,
-        K=K,
-    )
+    # # PART 1 -- Projection
+    # project_and_superimpose_corners_onto_img(
+    #     pose_vec=poses_vec[0],
+    #     img=img_undistorted,
+    #     K=K,
+    # )
+    #
+    # # PART 1 -- Cube
+    # draw_cube(
+    #     pose_vec=poses_vec[0],
+    #     img_undistorted=img_undistorted,
+    #     K=K,
+    # )
 
     # PART 2
-    for idx in range(1, 100):
+    for idx in range(1, 737):
         filename = get_img_distorted_filename(idx)
         img_distorted = utils.load_img(filename)
         project_and_superimpose_corners_onto_img(
@@ -55,6 +55,7 @@ def main():
             img=img_distorted,
             K=K,
             D=D,
+            img_idx=idx,
         )
 
     # undistort image with bilinear interpolation

@@ -36,7 +36,11 @@ def generate_3D_corner_positions() -> np.ndarray:
 
 
 def project_and_superimpose_corners_onto_img(
-    pose_vec: np.ndarray, img, K: np.ndarray, D: np.ndarray | None = None
+    pose_vec: np.ndarray,
+    img,
+    K: np.ndarray,
+    D: np.ndarray | None = None,
+    img_idx: int = 1,
 ) -> None:
     """
     Project the corners of the checkerboard from the world frame to the camera frame
@@ -49,10 +53,12 @@ def project_and_superimpose_corners_onto_img(
         K=K,
         D=D,
     )
-    _show_image_and_points(img=img, points=projected_points)
+    _show_image_and_points(img=img, points=projected_points, img_idx=img_idx)
 
 
-def _show_image_and_points(img, points: np.ndarray) -> None:
+def _show_image_and_points(img, points: np.ndarray, img_idx: int) -> None:
+    plt.clf()
+    plt.close()
     plt.imshow(img, cmap=IMG_CMAP)
     plt.plot(
         points[X_INDEX],
@@ -60,4 +66,6 @@ def _show_image_and_points(img, points: np.ndarray) -> None:
         "or",
         markersize=MARKER_SIZE,
     )
-    plt.show()
+    # plt.show()
+    img_idx_padded = f"{img_idx}".zfill(4)
+    plt.savefig(f"./data/images_with_corners/img_{img_idx_padded}.jpg")

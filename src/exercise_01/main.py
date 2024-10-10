@@ -4,6 +4,7 @@ import time
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+from corners_onto_undistorted_img import map_corners_onto_undistorted_img
 from pose_vector_to_transformation_matrix import pose_vector_to_transformation_matrix
 from project_points import project_points
 from undistort_image import undistort_image
@@ -14,84 +15,9 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def load_poses(filename: str) -> np.ndarray:
-    """
-    Load camera poses. Dimensions: [736, 6]
-
-    Each row i of matrix 'poses' contains the transformations that transforms
-    points expressed in the world frame to points expressed in the camera frame.
-
-    Each row: (w_x, w_y, w_z, t_x, t_y, t_z), where
-    w: axis-angle representation
-    t: translation in meters
-    """
-
-    return np.loadtxt(filename)
-
-
-def load_camera_intrinsics(
-    K_filename: str, D_filename: str
-) -> tuple[np.ndarray, np.ndarray]:
-    return (
-        np.loadtxt(K_filename),
-        np.loadtxt(D_filename),
-    )
-
-
-def generate_3D_corner_positions() -> np.ndarray:
-    """
-    Corner positions in checkerboard.
-
-    Returns:
-        M: matrix of corners of the checkerboard as 3D points (X, Y, Z) expressed
-        in the world coordinate system (Nx3)
-    """
-    nx, ny = (9, 6)
-    x_arr = np.linspace(0, 0.32, nx)
-    y_arr = np.linspace(0, 0.20, ny)
-    matrix = [[x, y, 0, 1] for x in x_arr for y in y_arr]
-    return np.array(matrix)
-
-
-def load_img(filename: str):
-    return cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
-
-
 def main():
-    poses = load_poses("./data/poses.txt")
-
-    corners_world_homogenous = generate_3D_corner_positions()
-    logger.debug(f"corners_world_homogenous: {corners_world_homogenous}")
-
-    K, D = load_camera_intrinsics("./data/K.txt", "./data/D.txt")
-    logger.debug(f"K:\n{K}")
-    logger.debug(f"D:\n{D}")
-
-    img = load_img("./data/images/img_0001.jpg")
-    img_undistorted = load_img("./data/images_undistorted/img_0001.jpg")
-
-    # project the corners on the image
-    # compute the 4x4 homogeneous transformation matrix that maps points
-    # from the world to the camera coordinate frame
-    transformation_matrix = pose_vector_to_transformation_matrix(poses[1])
-    logger.debug(f"Transformation matrix:\n{transformation_matrix}")
-
-    # transform 3d points from world to current camera pose
-    # projected_points = project_points(corners, K, D)
-    corners_camera_homogenous = np.matmul(
-        K,
-        np.matmul(transformation_matrix[:3, :], np.transpose(corners_world_homogenous)),
-    )
-    logger.debug(f"Corners camera:\n{corners_camera_homogenous}")
-
-    plt.imshow(img_undistorted, cmap="gray")
-    plt.plot(
-        corners_camera_homogenous[0] / corners_camera_homogenous[2],
-        corners_camera_homogenous[1] / corners_camera_homogenous[2],
-        "or",
-        markersize=3,
-    )
-    plt.show()
+    # PART 1
+    map_corners_onto_undistorted_img()
 
     # undistort image with bilinear interpolation
     """Remove this comment if you have completed the code until here

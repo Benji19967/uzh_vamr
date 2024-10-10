@@ -18,7 +18,12 @@ FILENAME_POSES_VEC = "./data/poses.txt"
 FILENAME_CAMERA_MATRIX = "./data/K.txt"
 FILENAME_DISTORTION_COEFFICIENTS = "./data/D.txt"
 FILENAME_UNDISTORTED_IMAGE = "./data/images_undistorted/img_0001.jpg"
-FILENAME_DISTORTED_IMAGE = "./data/images/img_0001.jpg"
+DIR_DISTORTED_IMAGES = "./data/images"
+
+
+def get_img_distorted_filename(idx: int) -> str:
+    padded_idx = f"{idx}".zfill(4)
+    return DIR_DISTORTED_IMAGES + "/" + f"img_{padded_idx}.jpg"
 
 
 def main():
@@ -26,7 +31,6 @@ def main():
     K = utils.load_camera_matrix(K_filename=FILENAME_CAMERA_MATRIX)
     D = utils.load_distortion_coefficients(D_filename=FILENAME_DISTORTION_COEFFICIENTS)
     img_undistorted = utils.load_img(FILENAME_UNDISTORTED_IMAGE)
-    img_distorted = utils.load_img(FILENAME_DISTORTED_IMAGE)
 
     # PART 1 -- Projection
     project_and_superimpose_corners_onto_img(
@@ -43,12 +47,15 @@ def main():
     )
 
     # PART 2
-    project_and_superimpose_corners_onto_img(
-        pose_vec=poses_vec[0],
-        img=img_distorted,
-        K=K,
-        D=D,
-    )
+    for idx in range(1, 100):
+        filename = get_img_distorted_filename(idx)
+        img_distorted = utils.load_img(filename)
+        project_and_superimpose_corners_onto_img(
+            pose_vec=poses_vec[idx - 1],
+            img=img_distorted,
+            K=K,
+            D=D,
+        )
 
     # undistort image with bilinear interpolation
     """Remove this comment if you have completed the code until here

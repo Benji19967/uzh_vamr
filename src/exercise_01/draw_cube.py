@@ -2,8 +2,7 @@ import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
-import utils
-from pose_vector_to_transformation_matrix import pose_vector_to_transformation_matrix
+from world_to_pixel import world_to_pixel
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -35,85 +34,68 @@ def generate_3D_cube_vertices(
                     ]
                 )
 
-    return np.array(vertices)
+    cube_vertices = np.array(vertices)
+    logger.debug(f"{cube_vertices=}")
+
+    return cube_vertices
 
 
-def draw_cube() -> None:
-    poses = utils.load_poses_vec("./data/poses.txt")
-    K, D = utils.load_camera_intrinsics("./data/K.txt", "./data/D.txt")
-    logger.debug(f"K:\n{K}")
-    logger.debug(f"D:\n{D}")
-
-    cube_vertices = generate_3D_cube_vertices(
+def draw_cube(pose_vec: np.ndarray, K: np.ndarray, img_undistorted) -> None:
+    p_W_cube_vertices_hom = generate_3D_cube_vertices(
         x_shift_num_squares=3, y_shift_num_squares=2, num_squares_per_edge_of_cube=2
     )
-    logger.debug(f"cube_vertices: {cube_vertices}")
-
-    img_undistorted = utils.load_img("./data/images_undistorted/img_0001.jpg")
-
-    # project the corners on the image
-    # compute the 4x4 homogeneous transformation matrix that maps points
-    # from the world to the camera coordinate frame
-    transformation_matrix = pose_vector_to_transformation_matrix(poses[1])
-    logger.debug(f"Transformation matrix:\n{transformation_matrix}")
-
-    # transform 3d points from world to current camera pose
-    # projected_points = project_points(corners, K, D)
-    corners_camera_homogenous = np.matmul(
-        K,
-        np.matmul(transformation_matrix[:3, :], np.transpose(cube_vertices)),
+    projected_points = world_to_pixel(
+        p_W_hom=p_W_cube_vertices_hom, pose_vec=pose_vec, K=K
     )
-    corners_camera_homogenous = corners_camera_homogenous / corners_camera_homogenous[2]
-    logger.debug(f"Corners camera:\n{corners_camera_homogenous}")
 
     plt.imshow(img_undistorted, cmap="gray")
     plt.plot(
-        corners_camera_homogenous[0],
-        corners_camera_homogenous[1],
+        projected_points[0],
+        projected_points[1],
         "or",
         markersize=3,
     )
 
-    corners_camera_homogenous = np.transpose(corners_camera_homogenous)
+    projected_points = np.transpose(projected_points)
     lw = 3
     # base layer of the cube
     plt.plot(
-        corners_camera_homogenous[[1, 3, 7, 5, 1], 0],
-        corners_camera_homogenous[[1, 3, 7, 5, 1], 1],
+        projected_points[[1, 3, 7, 5, 1], 0],
+        projected_points[[1, 3, 7, 5, 1], 1],
         "r-",
         linewidth=lw,
     )
 
     # top layer of the cube
     plt.plot(
-        corners_camera_homogenous[[0, 2, 6, 4, 0], 0],
-        corners_camera_homogenous[[0, 2, 6, 4, 0], 1],
+        projected_points[[0, 2, 6, 4, 0], 0],
+        projected_points[[0, 2, 6, 4, 0], 1],
         "r-",
         linewidth=lw,
     )
 
     # vertical lines
     plt.plot(
-        corners_camera_homogenous[[0, 1], 0],
-        corners_camera_homogenous[[0, 1], 1],
+        projected_points[[0, 1], 0],
+        projected_points[[0, 1], 1],
         "r-",
         linewidth=lw,
     )
     plt.plot(
-        corners_camera_homogenous[[2, 3], 0],
-        corners_camera_homogenous[[2, 3], 1],
+        projected_points[[2, 3], 0],
+        projected_points[[2, 3], 1],
         "r-",
         linewidth=lw,
     )
     plt.plot(
-        corners_camera_homogenous[[4, 5], 0],
-        corners_camera_homogenous[[4, 5], 1],
+        projected_points[[4, 5], 0],
+        projected_points[[4, 5], 1],
         "r-",
         linewidth=lw,
     )
     plt.plot(
-        corners_camera_homogenous[[6, 7], 0],
-        corners_camera_homogenous[[6, 7], 1],
+        projected_points[[6, 7], 0],
+        projected_points[[6, 7], 1],
         "r-",
         linewidth=lw,
     )

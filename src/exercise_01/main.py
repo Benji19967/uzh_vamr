@@ -9,8 +9,6 @@ from corners_onto_undistorted_img import (
     project_and_superimpose_corners_onto_undistorted_img,
 )
 from draw_cube import draw_cube
-from pose_vector_to_transformation_matrix import pose_vector_to_transformation_matrix
-from project_points import project_points
 from undistort_image import undistort_image
 from undistort_image_vectorized import undistort_image_vectorized
 
@@ -20,23 +18,29 @@ logger.setLevel(logging.DEBUG)
 
 FILENAME_POSES_VEC = "./data/poses.txt"
 FILENAME_CAMERA_MATRIX = "./data/K.txt"
+FILENAME_DISTORTION_COEFFICIENTS = "./data/D.txt"
 FILENAME_UNDISTORTED_IMAGE = "./data/images_undistorted/img_0001.jpg"
 
 
 def main():
     poses_vec = utils.load_poses_vec(filename=FILENAME_POSES_VEC)
     K = utils.load_camera_matrix(K_filename=FILENAME_CAMERA_MATRIX)
+    D = utils.load_distortion_coefficients(D_filename=FILENAME_DISTORTION_COEFFICIENTS)
     img_undistorted = utils.load_img(FILENAME_UNDISTORTED_IMAGE)
 
     # PART 1 -- Projection
     project_and_superimpose_corners_onto_undistorted_img(
-        poses_vec=poses_vec,
+        pose_vec=poses_vec[0],
         K=K,
         img_undistorted=img_undistorted,
     )
 
     # PART 1 -- Cube
-    # draw_cube()
+    draw_cube(
+        pose_vec=poses_vec[0],
+        K=K,
+        img_undistorted=img_undistorted,
+    )
 
     # PART 2
     # TODO:
@@ -63,38 +67,6 @@ def main():
     axs[1].imshow(img_undistorted_vectorized, cmap='gray')
     axs[1].set_axis_off()
     axs[1].set_title('Without bilinear interpolation')
-    plt.show()
-    """
-
-    # calculate the cube points to then draw the image
-    # TODO: Your code here
-
-    # Plot the cube
-    """ Remove this comment if you have completed the code until here
-    plt.clf()
-    plt.close()
-    plt.imshow(img_undistorted, cmap='gray')
-
-    lw = 3
-
-    # base layer of the cube
-    plt.plot(cube_pts[[1, 3, 7, 5, 1], 0],
-             cube_pts[[1, 3, 7, 5, 1], 1],
-             'r-',
-             linewidth=lw)
-
-    # top layer of the cube
-    plt.plot(cube_pts[[0, 2, 6, 4, 0], 0],
-             cube_pts[[0, 2, 6, 4, 0], 1],
-             'r-',
-             linewidth=lw)
-
-    # vertical lines
-    plt.plot(cube_pts[[0, 1], 0], cube_pts[[0, 1], 1], 'r-', linewidth=lw)
-    plt.plot(cube_pts[[2, 3], 0], cube_pts[[2, 3], 1], 'r-', linewidth=lw)
-    plt.plot(cube_pts[[4, 5], 0], cube_pts[[4, 5], 1], 'r-', linewidth=lw)
-    plt.plot(cube_pts[[6, 7], 0], cube_pts[[6, 7], 1], 'r-', linewidth=lw)
-
     plt.show()
     """
 

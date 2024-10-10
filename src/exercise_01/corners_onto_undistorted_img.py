@@ -1,11 +1,8 @@
 import logging
-from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
-import utils
-from pose_vector_to_transformation_matrix import pose_vector_to_transformation_matrix
-from project_points import project_points
+from world_to_pixel import world_to_pixel
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -39,23 +36,14 @@ def generate_3D_corner_positions() -> np.ndarray:
 
 
 def project_and_superimpose_corners_onto_undistorted_img(
-    poses_vec: np.ndarray, K: np.ndarray, img_undistorted
+    pose_vec: np.ndarray, K: np.ndarray, img_undistorted
 ) -> None:
     """
     Project the corners of the checkerboard from the world frame to the camera frame
     and superimpose them onth the undistorted image.
     """
     p_W_corners_hom = generate_3D_corner_positions()
-
-    # project the corners on the image
-    # compute the 4x4 homogeneous transformation matrix that maps points
-    # from the world to the camera coordinate frame
-    T_C_W = pose_vector_to_transformation_matrix(poses_vec[0])
-
-    # transform 3d points from world to current camera pose
-    p_C_corners = np.matmul(T_C_W[:3, :], np.transpose(p_W_corners_hom))
-    projected_points = project_points(p_C_corners, K)
-    logger.debug(f"{projected_points=}")
+    projected_points = world_to_pixel(p_W_hom=p_W_corners_hom, pose_vec=pose_vec, K=K)
 
     plt.imshow(img_undistorted, cmap=IMG_CMAP)
     plt.plot(

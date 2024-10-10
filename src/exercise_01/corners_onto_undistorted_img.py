@@ -66,6 +66,8 @@ def _show_image_and_points(img, points: np.ndarray, img_idx: int) -> None:
         "or",
         markersize=MARKER_SIZE,
     )
-    # plt.show()
-    img_idx_padded = f"{img_idx}".zfill(4)
-    plt.savefig(f"./data/images_with_corners/img_{img_idx_padded}.jpg")
+    plt.show()
+    # TODO: create a CLI and add an option to chose viewing/saving images
+
+    # img_idx_padded = f"{img_idx}".zfill(4)
+    # plt.savefig(f"./data/images_with_corners/img_{img_idx_padded}.jpg")

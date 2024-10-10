@@ -48,4 +48,9 @@ def load_distortion_coefficients(D_filename: str) -> np.ndarray:
 
 
 def load_img(filename: str):
+    """
+    Load image as a grayscale image.
+
+    Pixel values range from 0 (black) to 255 (white).
+    """
     return cv2.imread(filename, cv2.IMREAD_GRAYSCALE)

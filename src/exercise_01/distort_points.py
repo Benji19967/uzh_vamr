@@ -3,7 +3,7 @@ import logging
 import numpy as np
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 def distort_points(x: np.ndarray, D: np.ndarray, K: np.ndarray) -> np.ndarray:

@@ -47,41 +47,44 @@ def main():
     # )
 
     # PART 2
-    for idx in range(1, 737):
-        filename = get_img_distorted_filename(idx)
-        img_distorted = utils.load_img(filename)
-        project_and_superimpose_corners_onto_img(
-            pose_vec=poses_vec[idx - 1],
-            img=img_distorted,
-            K=K,
-            D=D,
-            img_idx=idx,
-        )
+    # for idx in range(1, 20):
+    #     filename = get_img_distorted_filename(idx)
+    #     img_distorted = utils.load_img(filename)
+    #     project_and_superimpose_corners_onto_img(
+    #         pose_vec=poses_vec[idx - 1],
+    #         img=img_distorted,
+    #         K=K,
+    #         D=D,
+    #         img_idx=idx,
+    #     )
 
     # undistort image with bilinear interpolation
-    """Remove this comment if you have completed the code until here
+    img_distorted_filename = get_img_distorted_filename(idx=1)
+    img_distorted = utils.load_img(img_distorted_filename)
     start_t = time.time()
-    img_undistorted = undistort_image(img, K, D, bilinear_interpolation=True)
-    print('Undistortion with bilinear interpolation completed in {}'.format(
-        time.time() - start_t))
+    img_undistorted = undistort_image(img_distorted, K, D, bilinear_interpolation=True)
+    print(
+        "Undistortion with bilinear interpolation completed in {}".format(
+            time.time() - start_t
+        )
+    )
 
     # vectorized undistortion without bilinear interpolation
-    start_t = time.time()
-    img_undistorted_vectorized = undistort_image_vectorized(img, K, D)
-    print('Vectorized undistortion completed in {}'.format(
-        time.time() - start_t))
+    # start_t = time.time()
+    # img_undistorted_vectorized = undistort_image_vectorized(img, K, D)
+    # print('Vectorized undistortion completed in {}'.format(
+    #     time.time() - start_t))
 
     plt.clf()
     plt.close()
     fig, axs = plt.subplots(2)
-    axs[0].imshow(img_undistorted, cmap='gray')
+    axs[0].imshow(img_undistorted, cmap="gray")
     axs[0].set_axis_off()
-    axs[0].set_title('With bilinear interpolation')
-    axs[1].imshow(img_undistorted_vectorized, cmap='gray')
-    axs[1].set_axis_off()
-    axs[1].set_title('Without bilinear interpolation')
+    # axs[0].set_title("With bilinear interpolation")
+    # axs[1].imshow(img_undistorted_vectorized, cmap="gray")
+    # axs[1].set_axis_off()
+    # axs[1].set_title("Without bilinear interpolation")
     plt.show()
-    """
 
 
 if __name__ == "__main__":

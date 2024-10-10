@@ -1,3 +1,4 @@
+import logging
 import time
 
 import cv2
@@ -7,6 +8,10 @@ from pose_vector_to_transformation_matrix import pose_vector_to_transformation_m
 from project_points import project_points
 from undistort_image import undistort_image
 from undistort_image_vectorized import undistort_image_vectorized
+
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def load_poses(filename: str) -> np.ndarray:
@@ -42,8 +47,8 @@ def generate_3D_corner_positions() -> np.ndarray:
         in the world coordinate system (Nx3)
     """
     nx, ny = (9, 6)
-    x_arr = np.linspace(0, 32, nx)
-    y_arr = np.linspace(0, 20, ny)
+    x_arr = np.linspace(0, 0.32, nx)
+    y_arr = np.linspace(0, 0.20, ny)
     matrix = [[x, y, 0, 1] for x in x_arr for y in y_arr]
     return np.array(matrix)
 
@@ -55,9 +60,12 @@ def load_img(filename: str):
 def main():
     poses = load_poses("./data/poses.txt")
 
-    corners_world = generate_3D_corner_positions()
+    corners_world_homogenous = generate_3D_corner_positions()
+    logger.debug(f"corners_world_homogenous: {corners_world_homogenous}")
 
     K, D = load_camera_intrinsics("./data/K.txt", "./data/D.txt")
+    logger.debug(f"K:\n{K}")
+    logger.debug(f"D:\n{D}")
 
     img = load_img("./data/images/img_0001.jpg")
     img_undistorted = load_img("./data/images_undistorted/img_0001.jpg")
@@ -65,28 +73,28 @@ def main():
     # project the corners on the image
     # compute the 4x4 homogeneous transformation matrix that maps points
     # from the world to the camera coordinate frame
-    transformation_matrix = pose_vector_to_transformation_matrix(poses[0])
+    transformation_matrix = pose_vector_to_transformation_matrix(poses[1])
+    logger.debug(f"Transformation matrix:\n{transformation_matrix}")
 
     # transform 3d points from world to current camera pose
     # projected_points = project_points(corners, K, D)
-    N = corners_world.shape[1]
-    ones = np.ones((1, N))
-
-    # corners_world_homogenous = np.vstack([corners_world, ones])
-    # print(corners_world_homogenous)
     corners_camera_homogenous = np.matmul(
-        K, np.matmul(transformation_matrix, corners_world[0])
+        K,
+        np.matmul(transformation_matrix[:3, :], np.transpose(corners_world_homogenous)),
     )
-    print(corners_camera_homogenous)
+    logger.debug(f"Corners camera:\n{corners_camera_homogenous}")
 
     plt.imshow(img_undistorted, cmap="gray")
     plt.plot(
-        corners_camera_homogenous[0], corners_camera_homogenous[1], "or", markersize=10
+        corners_camera_homogenous[0] / corners_camera_homogenous[2],
+        corners_camera_homogenous[1] / corners_camera_homogenous[2],
+        "or",
+        markersize=3,
     )
     plt.show()
 
     # undistort image with bilinear interpolation
-    """ Remove this comment if you have completed the code until here
+    """Remove this comment if you have completed the code until here
     start_t = time.time()
     img_undistorted = undistort_image(img, K, D, bilinear_interpolation=True)
     print('Undistortion with bilinear interpolation completed in {}'.format(
@@ -97,7 +105,7 @@ def main():
     img_undistorted_vectorized = undistort_image_vectorized(img, K, D)
     print('Vectorized undistortion completed in {}'.format(
         time.time() - start_t))
-    
+
     plt.clf()
     plt.close()
     fig, axs = plt.subplots(2)

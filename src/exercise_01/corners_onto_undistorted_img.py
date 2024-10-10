@@ -35,20 +35,28 @@ def generate_3D_corner_positions() -> np.ndarray:
     return p_W_corners_hom
 
 
-def project_and_superimpose_corners_onto_undistorted_img(
-    pose_vec: np.ndarray, K: np.ndarray, img_undistorted
+def project_and_superimpose_corners_onto_img(
+    pose_vec: np.ndarray, img, K: np.ndarray, D: np.ndarray | None = None
 ) -> None:
     """
     Project the corners of the checkerboard from the world frame to the camera frame
-    and superimpose them onth the undistorted image.
+    and superimpose them onto the undistorted image.
     """
     p_W_corners_hom = generate_3D_corner_positions()
-    projected_points = world_to_pixel(p_W_hom=p_W_corners_hom, pose_vec=pose_vec, K=K)
+    projected_points = world_to_pixel(
+        p_W_hom=p_W_corners_hom,
+        pose_vec=pose_vec,
+        K=K,
+        D=D,
+    )
+    _show_image_and_points(img=img, points=projected_points)
 
-    plt.imshow(img_undistorted, cmap=IMG_CMAP)
+
+def _show_image_and_points(img, points: np.ndarray) -> None:
+    plt.imshow(img, cmap=IMG_CMAP)
     plt.plot(
-        projected_points[X_INDEX],
-        projected_points[Y_INDEX],
+        points[X_INDEX],
+        points[Y_INDEX],
         "or",
         markersize=MARKER_SIZE,
     )

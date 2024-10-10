@@ -24,10 +24,12 @@ def project_points(
     """
     projected_points = np.matmul(K, points_3d)
     projected_points = projected_points / projected_points[2]
+    projected_points = projected_points[:2, :]
 
-    if D:
-        pass
+    if D is not None:
+        projected_points_distorted = distort_points(x=projected_points, K=K, D=D)
+        logger.debug(f"{projected_points_distorted=}")
+        return projected_points_distorted
 
-    logger.debug(f"projected_points:\n{projected_points}")
-
+    logger.debug(f"{projected_points=}")
     return projected_points

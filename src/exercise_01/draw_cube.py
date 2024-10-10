@@ -40,7 +40,7 @@ def generate_3D_cube_vertices(
     return cube_vertices
 
 
-def draw_cube(pose_vec: np.ndarray, K: np.ndarray, img_undistorted) -> None:
+def draw_cube(pose_vec: np.ndarray, img_undistorted, K: np.ndarray) -> None:
     p_W_cube_vertices_hom = generate_3D_cube_vertices(
         x_shift_num_squares=3, y_shift_num_squares=2, num_squares_per_edge_of_cube=2
     )

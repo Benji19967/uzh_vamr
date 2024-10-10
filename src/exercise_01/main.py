@@ -5,9 +5,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import utils
-from corners_onto_undistorted_img import (
-    project_and_superimpose_corners_onto_undistorted_img,
-)
+from corners_onto_undistorted_img import project_and_superimpose_corners_onto_img
 from draw_cube import draw_cube
 from undistort_image import undistort_image
 from undistort_image_vectorized import undistort_image_vectorized
@@ -20,6 +18,7 @@ FILENAME_POSES_VEC = "./data/poses.txt"
 FILENAME_CAMERA_MATRIX = "./data/K.txt"
 FILENAME_DISTORTION_COEFFICIENTS = "./data/D.txt"
 FILENAME_UNDISTORTED_IMAGE = "./data/images_undistorted/img_0001.jpg"
+FILENAME_DISTORTED_IMAGE = "./data/images/img_0001.jpg"
 
 
 def main():
@@ -27,23 +26,29 @@ def main():
     K = utils.load_camera_matrix(K_filename=FILENAME_CAMERA_MATRIX)
     D = utils.load_distortion_coefficients(D_filename=FILENAME_DISTORTION_COEFFICIENTS)
     img_undistorted = utils.load_img(FILENAME_UNDISTORTED_IMAGE)
+    img_distorted = utils.load_img(FILENAME_DISTORTED_IMAGE)
 
     # PART 1 -- Projection
-    project_and_superimpose_corners_onto_undistorted_img(
+    project_and_superimpose_corners_onto_img(
         pose_vec=poses_vec[0],
+        img=img_undistorted,
         K=K,
-        img_undistorted=img_undistorted,
     )
 
     # PART 1 -- Cube
     draw_cube(
         pose_vec=poses_vec[0],
-        K=K,
         img_undistorted=img_undistorted,
+        K=K,
     )
 
     # PART 2
-    # TODO:
+    project_and_superimpose_corners_onto_img(
+        pose_vec=poses_vec[0],
+        img=img_distorted,
+        K=K,
+        D=D,
+    )
 
     # undistort image with bilinear interpolation
     """Remove this comment if you have completed the code until here

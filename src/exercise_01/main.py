@@ -4,7 +4,10 @@ import time
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-from corners_onto_undistorted_img import map_corners_onto_undistorted_img
+from corners_onto_undistorted_img import (
+    project_and_superimpose_corners_onto_undistorted_img,
+)
+from draw_cube import draw_cube
 from pose_vector_to_transformation_matrix import pose_vector_to_transformation_matrix
 from project_points import project_points
 from undistort_image import undistort_image
@@ -17,7 +20,10 @@ logger.setLevel(logging.DEBUG)
 
 def main():
     # PART 1
-    map_corners_onto_undistorted_img()
+    # project_and_superimpose_corners_onto_undistorted_img()
+
+    # PART 2
+    draw_cube()
 
     # undistort image with bilinear interpolation
     """Remove this comment if you have completed the code until here

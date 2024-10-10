@@ -1,14 +1,9 @@
 import logging
-import time
 
-import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import utils
 from pose_vector_to_transformation_matrix import pose_vector_to_transformation_matrix
-from project_points import project_points
-from undistort_image import undistort_image
-from undistort_image_vectorized import undistort_image_vectorized
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -30,9 +25,10 @@ def generate_3D_corner_positions() -> np.ndarray:
     return np.array(matrix)
 
 
-def map_corners_onto_undistorted_img() -> None:
+def project_and_superimpose_corners_onto_undistorted_img() -> None:
     """
-    Map the corners of of the checkerboard onto the undistorted image
+    Project the corners of the checkerboard from the world frame to the camera frame
+    and superimpose them onth the undistorted image.
     """
     poses = utils.load_poses("./data/poses.txt")
 

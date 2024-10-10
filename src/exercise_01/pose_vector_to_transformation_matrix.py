@@ -1,4 +1,10 @@
+import logging
+from typing import Any
+
 import numpy as np
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def pose_vector_to_transformation_matrix(pose_vec: np.ndarray) -> np.ndarray:
@@ -31,5 +37,7 @@ def pose_vector_to_transformation_matrix(pose_vec: np.ndarray) -> np.ndarray:
     R = I + np.sin(theta) * K + (1 - np.cos(theta)) * (K @ K)
     T = np.c_[R, t]
     T = np.r_[T, [[0, 0, 0, 1]]]
+
+    logger.debug(f"{T=}")
 
     return T

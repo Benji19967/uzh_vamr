@@ -4,6 +4,7 @@ import time
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import utils
 from corners_onto_undistorted_img import (
     project_and_superimpose_corners_onto_undistorted_img,
 )
@@ -17,13 +18,28 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+FILENAME_POSES_VEC = "./data/poses.txt"
+FILENAME_CAMERA_MATRIX = "./data/K.txt"
+FILENAME_UNDISTORTED_IMAGE = "./data/images_undistorted/img_0001.jpg"
+
 
 def main():
-    # PART 1
-    # project_and_superimpose_corners_onto_undistorted_img()
+    poses_vec = utils.load_poses_vec(filename=FILENAME_POSES_VEC)
+    K = utils.load_camera_matrix(K_filename=FILENAME_CAMERA_MATRIX)
+    img_undistorted = utils.load_img(FILENAME_UNDISTORTED_IMAGE)
+
+    # PART 1 -- Projection
+    project_and_superimpose_corners_onto_undistorted_img(
+        poses_vec=poses_vec,
+        K=K,
+        img_undistorted=img_undistorted,
+    )
+
+    # PART 1 -- Cube
+    # draw_cube()
 
     # PART 2
-    draw_cube()
+    # TODO:
 
     # undistort image with bilinear interpolation
     """Remove this comment if you have completed the code until here

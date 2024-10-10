@@ -5,7 +5,6 @@ import numpy as np
 import utils
 from pose_vector_to_transformation_matrix import pose_vector_to_transformation_matrix
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -40,7 +39,7 @@ def generate_3D_cube_vertices(
 
 
 def draw_cube() -> None:
-    poses = utils.load_poses("./data/poses.txt")
+    poses = utils.load_poses_vec("./data/poses.txt")
     K, D = utils.load_camera_intrinsics("./data/K.txt", "./data/D.txt")
     logger.debug(f"K:\n{K}")
     logger.debug(f"D:\n{D}")

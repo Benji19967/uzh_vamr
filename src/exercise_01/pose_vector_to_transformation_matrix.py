@@ -23,11 +23,11 @@ def pose_vector_to_transformation_matrix(
     """
     w = pose_vec[:3]
     t = pose_vec[3:]
-    I = np.identity(3)
-    theta = np.linalg.norm(w)
     if use_opencv:
         R, _ = cv2.Rodrigues(w)
     else:
+        I = np.identity(3)
+        theta = np.linalg.norm(w)
         k_unit = w / theta
         k_x, k_y, k_z = k_unit
         k_cross_product_matrix = np.array(

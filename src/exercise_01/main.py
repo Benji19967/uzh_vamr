@@ -33,11 +33,11 @@ def main():
     img_undistorted = utils.load_img(FILENAME_UNDISTORTED_IMAGE)
 
     # # PART 1 -- Projection
-    # project_and_superimpose_corners_onto_img(
-    #     pose_vec=poses_vec[0],
-    #     img=img_undistorted,
-    #     K=K,
-    # )
+    project_and_superimpose_corners_onto_img(
+        pose_vec=poses_vec[0],
+        img=img_undistorted,
+        K=K,
+    )
     #
     # # PART 1 -- Cube
     # draw_cube(
@@ -59,15 +59,15 @@ def main():
     #     )
 
     # undistort image with bilinear interpolation
-    img_distorted_filename = get_img_distorted_filename(idx=1)
-    img_distorted = utils.load_img(img_distorted_filename)
-    start_t = time.time()
-    img_undistorted = undistort_image(img_distorted, K, D, bilinear_interpolation=True)
-    print(
-        "Undistortion with bilinear interpolation completed in {}".format(
-            time.time() - start_t
-        )
-    )
+    # img_distorted_filename = get_img_distorted_filename(idx=1)
+    # img_distorted = utils.load_img(img_distorted_filename)
+    # start_t = time.time()
+    # img_undistorted = undistort_image(img_distorted, K, D, bilinear_interpolation=True)
+    # print(
+    #     "Undistortion with bilinear interpolation completed in {}".format(
+    #         time.time() - start_t
+    #     )
+    # )
 
     # vectorized undistortion without bilinear interpolation
     # start_t = time.time()

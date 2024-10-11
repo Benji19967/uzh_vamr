@@ -52,5 +52,8 @@ def load_img(filename: str):
     Load image as a grayscale image.
 
     Pixel values range from 0 (black) to 255 (white).
+
+    Note: shape is (HxW) such that x, y in a traditional Cartesian coordinate
+    system are inverted to (y, x).
     """
     return cv2.imread(filename, cv2.IMREAD_GRAYSCALE)

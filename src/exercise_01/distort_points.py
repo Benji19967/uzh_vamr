@@ -37,4 +37,5 @@ def distort_points(x: np.ndarray, D: np.ndarray, K: np.ndarray) -> np.ndarray:
     distorted_points = np.stack([xpp, ypp], axis=0)
 
     logger.debug(f"{distorted_points=}")
+    logger.debug(f"{distorted_points.shape}")
     return distorted_points

@@ -32,31 +32,31 @@ def main():
     D = utils.load_distortion_coefficients(D_filename=FILENAME_DISTORTION_COEFFICIENTS)
     img_undistorted = utils.load_img(FILENAME_UNDISTORTED_IMAGE)
 
-    # # PART 1 -- Projection
-    # project_and_superimpose_corners_onto_img(
-    #     pose_vec=poses_vec[0],
-    #     img=img_undistorted,
-    #     K=K,
-    # )
-    #
-    # # PART 1 -- Cube
-    # draw_cube(
-    #     pose_vec=poses_vec[0],
-    #     img_undistorted=img_undistorted,
-    #     K=K,
-    # )
+    # PART 1 -- Projection
+    project_and_superimpose_corners_onto_img(
+        pose_vec=poses_vec[0],
+        img=img_undistorted,
+        K=K,
+    )
+
+    # PART 1 -- Cube
+    draw_cube(
+        pose_vec=poses_vec[0],
+        img_undistorted=img_undistorted,
+        K=K,
+    )
 
     # PART 2
-    # for idx in range(1, 20):
-    #     filename = get_img_distorted_filename(idx)
-    #     img_distorted = utils.load_img(filename)
-    #     project_and_superimpose_corners_onto_img(
-    #         pose_vec=poses_vec[idx - 1],
-    #         img=img_distorted,
-    #         K=K,
-    #         D=D,
-    #         img_idx=idx,
-    #     )
+    for idx in range(1, 20):
+        filename = get_img_distorted_filename(idx)
+        img_distorted = utils.load_img(filename)
+        project_and_superimpose_corners_onto_img(
+            pose_vec=poses_vec[idx - 1],
+            img=img_distorted,
+            K=K,
+            D=D,
+            img_idx=idx,
+        )
 
     # undistort image with bilinear interpolation
     img_distorted_filename = get_img_distorted_filename(idx=1)
@@ -70,20 +70,19 @@ def main():
     )
 
     # vectorized undistortion without bilinear interpolation
-    # start_t = time.time()
-    # img_undistorted_vectorized = undistort_image_vectorized(img, K, D)
-    # print('Vectorized undistortion completed in {}'.format(
-    #     time.time() - start_t))
+    start_t = time.time()
+    img_undistorted_vectorized = undistort_image_vectorized(img_distorted, K, D)
+    print("Vectorized undistortion completed in {}".format(time.time() - start_t))
 
     plt.clf()
     plt.close()
     fig, axs = plt.subplots(2)
     axs[0].imshow(img_undistorted, cmap="gray")
     axs[0].set_axis_off()
-    # axs[0].set_title("With bilinear interpolation")
-    # axs[1].imshow(img_undistorted_vectorized, cmap="gray")
-    # axs[1].set_axis_off()
-    # axs[1].set_title("Without bilinear interpolation")
+    axs[0].set_title("With bilinear interpolation")
+    axs[1].imshow(img_undistorted_vectorized, cmap="gray")
+    axs[1].set_axis_off()
+    axs[1].set_title("Without bilinear interpolation")
     plt.show()
 
 

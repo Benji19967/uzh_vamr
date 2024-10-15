@@ -26,6 +26,7 @@ def get_img_distorted_filename(idx: int) -> str:
     return DIR_DISTORTED_IMAGES + "/" + f"img_{padded_idx}.jpg"
 
 
+# TODO: Add CLI using Typer
 def main():
     poses_vec = utils.load_poses_vec(filename=FILENAME_POSES_VEC)
     K = utils.load_camera_matrix(K_filename=FILENAME_CAMERA_MATRIX)

@@ -1,9 +1,10 @@
 import numpy as np
 
+
 def warpImage(image, W):
     """
     Input
-        image   np.ndarray 
+        image   np.ndarray
         W       2 x 3 np.ndarray
 
     Output
@@ -12,4 +13,3 @@ def warpImage(image, W):
 
     pass
     # TODO: Your code here
-

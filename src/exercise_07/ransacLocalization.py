@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-
 from code_previous_exercises.estimate_pose_dlt import estimatePoseDLT
 from code_previous_exercises.projectPoints import projectPoints
 
@@ -39,7 +38,6 @@ def ransacLocalization(matched_query_keypoints, corresponding_landmarks, K):
     # RANSAC
     i = 0
     while num_iterations > i:
-
         # Model from k samples (DLT or P3P)
         indices = np.random.permutation(corresponding_landmarks.shape[0])[:k]
         landmark_sample = corresponding_landmarks[indices, :]
@@ -62,18 +60,14 @@ def ransacLocalization(matched_query_keypoints, corresponding_landmarks, K):
                     t_C_W_guess.append(translation_vector)
 
         else:
-            M_C_W_guess = estimatePoseDLT(
-                keypoint_sample.T, landmark_sample, K
-            )
+            M_C_W_guess = estimatePoseDLT(keypoint_sample.T, landmark_sample, K)
             R_C_W_guess = M_C_W_guess[:, :3]
             t_C_W_guess = M_C_W_guess[:, -1]
 
         # Count inliers
         if not use_p3p:
             C_landmarks = (
-                np.matmul(
-                    R_C_W_guess, corresponding_landmarks[:, :, None]
-                ).squeeze(-1)
+                np.matmul(R_C_W_guess, corresponding_landmarks[:, :, None]).squeeze(-1)
                 + t_C_W_guess[None, :]
             )
             projected_points = projectPoints(C_landmarks, K)
@@ -85,7 +79,6 @@ def ransacLocalization(matched_query_keypoints, corresponding_landmarks, K):
             # If we use p3p, also consider inliers for the 4 solutions.
             is_inlier = np.zeros(corresponding_landmarks.shape[0])
             for alt_idx in range(len(R_C_W_guess)):
-
                 # Project points
                 C_landmarks = np.matmul(
                     R_C_W_guess[alt_idx], corresponding_landmarks[:, :, None]
@@ -100,10 +93,7 @@ def ransacLocalization(matched_query_keypoints, corresponding_landmarks, K):
 
         min_inlier_count = 30 if tweaked_for_more else 6
 
-        if (
-            is_inlier.sum() > max_num_inliers
-            and is_inlier.sum() >= min_inlier_count
-        ):
+        if is_inlier.sum() > max_num_inliers and is_inlier.sum() >= min_inlier_count:
             max_num_inliers = is_inlier.sum()
             best_inlier_mask = is_inlier
 
@@ -139,11 +129,7 @@ def ransacLocalization(matched_query_keypoints, corresponding_landmarks, K):
         t_C_W = M_C_W[:, -1]
 
         if adaptive:
-            print(
-                "    Adaptive RANSAC: Needed {} iteration to converge.".format(
-                    i - 1
-                )
-            )
+            print("    Adaptive RANSAC: Needed {} iteration to converge.".format(i - 1))
             print(
                 "    Adaptive RANSAC: Estimated Ouliers: {} %".format(
                     100 * outlier_ratio

@@ -63,10 +63,10 @@ class VisualIntertialOdometry(object):
 
 
 if __name__ == "__main__":
-    import time
     import argparse
+    import time
 
-    from dataset import EuRoCDataset, DataPublisher
+    from dataset import DataPublisher, EuRoCDataset
     from viewer import Viewer
 
     parser = argparse.ArgumentParser()

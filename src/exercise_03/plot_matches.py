@@ -12,4 +12,4 @@ def plotMatches(matches, query_keypoints, database_keypoints):
     y_to = database_keypoints[1, match_indices]
 
     for i in range(x_from.shape[0]):
-        plt.plot([y_from[i], y_to[i]], [x_from[i], x_to[i]], 'g-', linewidth=3)
+        plt.plot([y_from[i], y_to[i]], [x_from[i], x_to[i]], "g-", linewidth=3)

@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.optimize import least_squares
-
 from utils import HomogMatrix2twist, twist2HomogMatrix
 
 
@@ -18,7 +17,10 @@ def alignEstimateToGroundTruth(pp_G_C, p_V_C):
     def alignError(x):
         T_G_V = twist2HomogMatrix(x[:6])
         scale_G_V = x[6]
-        p_G_C = np.matmul(scale_G_V * T_G_V[None, :3, :3], p_V_C.T[:, :, None]).squeeze(-1) + T_G_V[None, :3, 3]
+        p_G_C = (
+            np.matmul(scale_G_V * T_G_V[None, :3, :3], p_V_C.T[:, :, None]).squeeze(-1)
+            + T_G_V[None, :3, 3]
+        )
         errors = pp_G_C.T - p_G_C
 
         return errors.flatten()
@@ -30,6 +32,9 @@ def alignEstimateToGroundTruth(pp_G_C, p_V_C):
     T_G_V = twist2HomogMatrix(x_optim[:6])
     scale_G_V = x_optim[6]
 
-    p_G_C = np.matmul(scale_G_V * T_G_V[None, :3, :3], p_V_C.T[:, :, None]).squeeze(-1) + T_G_V[None, :3, 3]
+    p_G_C = (
+        np.matmul(scale_G_V * T_G_V[None, :3, :3], p_V_C.T[:, :, None]).squeeze(-1)
+        + T_G_V[None, :3, 3]
+    )
 
     return p_G_C.T

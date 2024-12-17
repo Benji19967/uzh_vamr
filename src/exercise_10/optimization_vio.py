@@ -1,6 +1,6 @@
 import numpy as np
-from scipy.stats import chi2
 from scipy.optimize import least_squares
+from scipy.stats import chi2
 
 
 def quaternion_from_axis_angle(axis_angle):
@@ -36,11 +36,11 @@ def quaternion_multiply(q1, q2):
     )
 
 
-from utils import *
-from feature import Feature
-
 import time
 from collections import namedtuple
+
+from feature import Feature
+from utils import *
 
 
 class StereoReprojectionError:
@@ -235,9 +235,7 @@ class OptimizationBasedVIO(object):
     def online_reset(self):
         """Reset the system when necessary."""
         # Check if we need to reset based on number of tracked features
-        min_required_features = (
-            3  # Minimum features needed for reliable tracking
-        )
+        min_required_features = 3  # Minimum features needed for reliable tracking
         num_tracked_features = sum(
             1
             for feature in self.map_server.values()
@@ -245,12 +243,8 @@ class OptimizationBasedVIO(object):
         )
 
         # Check for numerical instability in state estimates
-        position_valid = np.all(
-            np.isfinite(self.state_server.imu_state.position)
-        )
-        orientation_valid = np.all(
-            np.isfinite(self.state_server.imu_state.orientation)
-        )
+        position_valid = np.all(np.isfinite(self.state_server.imu_state.position))
+        orientation_valid = np.all(np.isfinite(self.state_server.imu_state.orientation))
 
         should_reset = (
             num_tracked_features < min_required_features
@@ -271,9 +265,7 @@ class OptimizationBasedVIO(object):
             if not position_valid:
                 self.state_server.imu_state.position = np.zeros(3)
             if not orientation_valid:
-                self.state_server.imu_state.orientation = np.array(
-                    [0.0, 0.0, 0.0, 1.0]
-                )
+                self.state_server.imu_state.orientation = np.array([0.0, 0.0, 0.0, 1.0])
 
             # Reset null space variables
             self.state_server.imu_state.orientation_null = (
@@ -319,11 +311,10 @@ class OptimizationBasedVIO(object):
         # Add all features in the feature_msg to self.map_server
         for feature in feature_msg.features:
             if feature.id not in self.map_server:
-
                 # This is a new feature.
                 map_feature = Feature(feature.id, self.optimization_config)
-                map_feature.observations[self.state_server.imu_state.id] = (
-                    np.array([feature.u0, feature.v0, feature.u1, feature.v1])
+                map_feature.observations[self.state_server.imu_state.id] = np.array(
+                    [feature.u0, feature.v0, feature.u1, feature.v1]
                 )
                 # Initialize the feature position using triangulation
                 current_pose = Isometry3d(
@@ -354,14 +345,14 @@ class OptimizationBasedVIO(object):
         # Save to file
         filename = "publish_estimated.txt"
         with open(filename, "a") as f:
-            f.write(f"{imu_state.timestamp} "
-                    f"{' '.join(map(str, imu_state.position))} "
-                    f"{' '.join(map(str, imu_state.orientation))}\n")
+            f.write(
+                f"{imu_state.timestamp} "
+                f"{' '.join(map(str, imu_state.position))} "
+                f"{' '.join(map(str, imu_state.orientation))}\n"
+            )
 
         # Transform poses
-        T_i_w = Isometry3d(
-            to_rotation(imu_state.orientation).T, imu_state.position
-        )
+        T_i_w = Isometry3d(to_rotation(imu_state.orientation).T, imu_state.position)
         T_b_w = IMUState.T_imu_body * T_i_w * IMUState.T_imu_body.inverse()
         body_velocity = IMUState.T_imu_body.R @ imu_state.velocity
 
@@ -369,6 +360,6 @@ class OptimizationBasedVIO(object):
         t_c_w = imu_state.position + T_i_w.R @ imu_state.t_cam0_imu
         T_c_w = Isometry3d(R_w_c.T, t_c_w)
 
-        return namedtuple(
-            "vio_result", ["timestamp", "pose", "velocity", "cam0_pose"]
-        )(time, T_b_w, body_velocity, T_c_w)
+        return namedtuple("vio_result", ["timestamp", "pose", "velocity", "cam0_pose"])(
+            time, T_b_w, body_velocity, T_c_w
+        )

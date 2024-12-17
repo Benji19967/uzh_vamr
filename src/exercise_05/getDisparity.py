@@ -1,6 +1,7 @@
-import numpy as np
 import multiprocessing
+
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.spatial.distance import cdist
 
 
@@ -30,18 +31,21 @@ def getDisparity(left_img, right_img, patch_radius, min_disp, max_disp):
     for row in range(patch_radius, rows - patch_radius):
         for col in range(max_disp + patch_radius, cols - patch_radius):
             # Here we construct what you can see in the left two subplots of Fig. 4.
-            left_patch = left_img[(row - r):(row + r + 1), (col - r):(col + r + 1)]
-            right_strip = right_img[(row - r):(row + r + 1), (col - r - max_disp):(col + r - min_disp + 1)]
+            left_patch = left_img[(row - r) : (row + r + 1), (col - r) : (col + r + 1)]
+            right_strip = right_img[
+                (row - r) : (row + r + 1),
+                (col - r - max_disp) : (col + r - min_disp + 1),
+            ]
 
             rsvecs = np.zeros([patch_size, patch_size, max_disp - min_disp + 1])
             for i in range(0, patch_size):
-                rsvecs[:, i, :] = right_strip[:, i:(max_disp - min_disp + i + 1)]
+                rsvecs[:, i, :] = right_strip[:, i : (max_disp - min_disp + i + 1)]
 
             # Transforming the patches into vectors so we can run them through pdist2.
             lpvec = left_patch.flatten()
             rsvecs = rsvecs.reshape([patch_size**2, max_disp - min_disp + 1])
 
-            ssds = cdist(lpvec[None, :], rsvecs.T, 'sqeuclidean').squeeze(0)
+            ssds = cdist(lpvec[None, :], rsvecs.T, "sqeuclidean").squeeze(0)
 
             if debug_ssds:
                 plt.figure(figsize=(15, 4))
@@ -50,13 +54,13 @@ def getDisparity(left_img, right_img, patch_radius, min_disp, max_disp):
                 plot3 = plt.subplot2grid((1, 4), (0, 3))
 
                 plot1.imshow(left_patch)
-                plot1.axis('off')
+                plot1.axis("off")
                 plot2.imshow(right_strip)
-                plot2.axis('off')
+                plot2.axis("off")
 
                 plot3.plot(ssds)
-                plt.xlabel('d-d_{max}')
-                plt.ylabel('SSD')
+                plt.xlabel("d-d_{max}")
+                plt.ylabel("SSD")
 
                 plt.tight_layout()
                 plt.show()
@@ -67,7 +71,11 @@ def getDisparity(left_img, right_img, patch_radius, min_disp, max_disp):
             min_ssd = ssds[neg_disp]
 
             if reject_outliers:
-                if (ssds <= 1.5 * min_ssd).sum() < 3 and neg_disp != 0 and neg_disp != ssds.shape[0] - 1:
+                if (
+                    (ssds <= 1.5 * min_ssd).sum() < 3
+                    and neg_disp != 0
+                    and neg_disp != ssds.shape[0] - 1
+                ):
                     if not refine_estimate:
                         disp_img[row, col] = max_disp - neg_disp
                     else:

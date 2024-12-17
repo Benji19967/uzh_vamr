@@ -1,7 +1,7 @@
 import numpy as np
-
 from get_sim_warp import getSimWarp
 from get_warped_patch import getWarpedPatch
+
 
 def trackBruteForce(I_R, I, x_T, r_T, r_D):
     """
@@ -20,7 +20,3 @@ def trackBruteForce(I_R, I, x_T, r_T, r_D):
     """
     pass
     # TODO: Your code here
-    
-
-
-    

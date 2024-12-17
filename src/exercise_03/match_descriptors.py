@@ -10,7 +10,7 @@ def matchDescriptors(query_descriptors, database_descriptors, match_lambda):
     with an SSD < lambda * min(SSD). No elements of matches will be equal except for the -1 elements.
     """
     pass
-    dists = cdist(query_descriptors.T, database_descriptors.T, 'euclidean')
+    dists = cdist(query_descriptors.T, database_descriptors.T, "euclidean")
     matches = np.argmin(dists, axis=1)
     dists = dists[np.arange(matches.shape[0]), matches]
     min_non_zero_dist = dists.min()

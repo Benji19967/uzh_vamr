@@ -1,11 +1,10 @@
-import numpy as np
-import cv2
 import os
 import time
-
 from collections import defaultdict, namedtuple
-
 from threading import Thread
+
+import cv2
+import numpy as np
 
 
 class GroundTruthReader(object):
@@ -171,9 +170,7 @@ class Stereo(object):
 
     def __iter__(self):
         for l, r in zip(self.cam0, self.cam1):
-            assert (
-                abs(l.timestamp - r.timestamp) < 0.01
-            ), "unsynced stereo pair"
+            assert abs(l.timestamp - r.timestamp) < 0.01, "unsynced stereo pair"
             yield self.field(l.timestamp, l.image, r.image, l, r)
 
     def __len__(self):
@@ -194,19 +191,14 @@ class EuRoCDataset(object):  # Stereo + IMU
     """
 
     def __init__(self, path):
-
         # load the ground truth state
         self.groundtruth = GroundTruthReader(
-            os.path.join(
-                path, "mav0", "state_groundtruth_estimate0", "data.csv"
-            ),
+            os.path.join(path, "mav0", "state_groundtruth_estimate0", "data.csv"),
             1e-9,
         )
 
         # load the IMU data
-        self.imu = IMUDataReader(
-            os.path.join(path, "mav0", "imu0", "data.csv"), 1e-9
-        )
+        self.imu = IMUDataReader(os.path.join(path, "mav0", "imu0", "data.csv"), 1e-9)
 
         # load the stereo images
         self.cam0 = ImageReader(
@@ -272,9 +264,7 @@ class DataPublisher(object):
             interval = data.timestamp - self.dataset_starttime
             if interval < 0:
                 continue
-            while (
-                time.time() - self.starttime
-            ) * self.ratio < interval + 1e-3:
+            while (time.time() - self.starttime) * self.ratio < interval + 1e-3:
                 time.sleep(1e-3)  # assumption: data frequency < 1000hz
                 if self.stopped:
                     return
@@ -341,4 +331,3 @@ if __name__ == "__main__":
         f"  ({timestamps[-1]-timestamps[0]}s)\n"
     )
     print("Please check if IMU and image are synced")
-

@@ -19,7 +19,6 @@ def parabolaRansac(data, max_noise):
     rerun_on_inliers = True
 
     for i in range(num_iterations):
-
         # Model based on 3 samples:
         indices = np.random.permutation(data.shape[1])[:3]
         samples = data[:, indices]

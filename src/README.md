@@ -1,5 +1,0 @@
-# Exercises
-
-## TODOs
-
-- [ ] Consistent notation

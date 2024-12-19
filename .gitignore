@@ -1,6 +1,6 @@
 # VAMR Specific
 
-src/project/data
+project/data
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -20,29 +20,34 @@ MATCH_LAMBDA = 4
 
 
 def read_img():
-    return cv2.imread("../data/000000.png", cv2.IMREAD_GRAYSCALE)
+    return cv2.imread("data/000000.png", cv2.IMREAD_GRAYSCALE)
 
 
 def part1(img):
     # Part 1 - Calculate Corner Response Functions
+
     # Shi-Tomasi
     shi_tomasi_scores = shi_tomasi(img, CORNER_PATCH_SIZE)
 
     # Harris
     harris_scores = harris(img, CORNER_PATCH_SIZE, HARRIS_KAPPA)
+
+    # Plotting
     fig, axs = plt.subplots(2, 2, squeeze=False)
     axs[0, 0].imshow(img, cmap="gray")
     axs[0, 0].axis("off")
     axs[0, 1].imshow(img, cmap="gray")
     axs[0, 1].axis("off")
 
-    axs[1, 0].imshow(shi_tomasi_scores)
-    axs[1, 0].set_title("Shi-Tomasi Scores")
-    axs[1, 0].axis("off")
+    if shi_tomasi_scores:
+        axs[1, 0].imshow(shi_tomasi_scores)
+        axs[1, 0].set_title("Shi-Tomasi Scores")
+        axs[1, 0].axis("off")
 
-    axs[1, 1].imshow(harris_scores)
-    axs[1, 1].set_title("Harris Scores")
-    axs[1, 1].axis("off")
+    if harris_scores:
+        axs[1, 1].imshow(harris_scores)
+        axs[1, 1].set_title("Harris Scores")
+        axs[1, 1].axis("off")
 
     fig.tight_layout()
     plt.show()
@@ -127,13 +132,13 @@ def part5():
 def main():
     img = read_img()
     harris_scores = part1(img)
-    part2(img=img, harris_scores=harris_scores)
-    part3(img)
-    part4()
-    part5()
+    # part2(img=img, harris_scores=harris_scores)
+    # part3(img)
+    # part4()
+    # part5()
 
 
 if __name__ == "__main__":
     print("Starting exercise 3")
-    # main()
+    main()
     print("Done exercise 3")

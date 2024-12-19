@@ -1,9 +1,9 @@
-import time
-from collections import defaultdict, namedtuple
-from itertools import chain, compress
-
-import cv2
 import numpy as np
+import cv2
+import time
+
+from itertools import chain, compress
+from collections import defaultdict, namedtuple
 
 
 class FeatureMetaData(object):
@@ -46,8 +46,10 @@ class ImageProcessor(object):
         # id for the next new feature.
         self.next_feature_id = 0
 
-        # feature detector using a fast feature detector.
-        self.detector = cv2.FastFeatureDetector_create(self.config.fast_threshold)
+        # feature detector using a fast feature detector. 
+        self.detector = cv2.FastFeatureDetector_create(
+            self.config.fast_threshold
+        )
 
         # IMU message buffer.
         self.imu_msg_buffer = []
@@ -217,9 +219,9 @@ class ImageProcessor(object):
         # Sort the new features in each grid based on its response.
         # And collect new features within each grid with high response.
         for i, new_features in enumerate(grid_new_features):
-            for feature in sorted(new_features, key=lambda x: x.response, reverse=True)[
-                : self.config.grid_min_feature_num
-            ]:
+            for feature in sorted(
+                new_features, key=lambda x: x.response, reverse=True
+            )[: self.config.grid_min_feature_num]:
                 self.curr_features[i].append(feature)
                 self.curr_features[i][-1].id = self.next_feature_id
                 self.curr_features[i][-1].lifetime = 1
@@ -310,13 +312,21 @@ class ImageProcessor(object):
         # The stereo matching results are directly used in the RANSAC.
 
         # Step 1: stereo matching.
-        curr_cam1_points, match_inliers = self.stereo_match(curr_tracked_cam0_points)
+        curr_cam1_points, match_inliers = self.stereo_match(
+            curr_tracked_cam0_points
+        )
 
         prev_matched_ids = select(prev_tracked_ids, match_inliers)
         prev_matched_lifetime = select(prev_tracked_lifetime, match_inliers)
-        prev_matched_cam0_points = select(prev_tracked_cam0_points, match_inliers)
-        prev_matched_cam1_points = select(prev_tracked_cam1_points, match_inliers)
-        curr_matched_cam0_points = select(curr_tracked_cam0_points, match_inliers)
+        prev_matched_cam0_points = select(
+            prev_tracked_cam0_points, match_inliers
+        )
+        prev_matched_cam1_points = select(
+            prev_tracked_cam1_points, match_inliers
+        )
+        curr_matched_cam0_points = select(
+            curr_tracked_cam0_points, match_inliers
+        )
         curr_matched_cam1_points = select(curr_cam1_points, match_inliers)
 
         # Number of features left after stereo matching.
@@ -391,9 +401,9 @@ class ImageProcessor(object):
         new_features = []
         for features in new_feature_sieve:
             if len(features) > self.config.grid_max_feature_num:
-                features = sorted(features, key=lambda x: x.response, reverse=True)[
-                    : self.config.grid_max_feature_num
-                ]
+                features = sorted(
+                    features, key=lambda x: x.response, reverse=True
+                )[: self.config.grid_max_feature_num]
             new_features.append(features)
         new_features = list(chain.from_iterable(new_features))
 
@@ -430,9 +440,9 @@ class ImageProcessor(object):
         # Sort the new features in each grid based on its response.
         # And collect new features within each grid with high response.
         for i, new_features in enumerate(grid_new_features):
-            for feature in sorted(new_features, key=lambda x: x.response, reverse=True)[
-                : self.config.grid_min_feature_num
-            ]:
+            for feature in sorted(
+                new_features, key=lambda x: x.response, reverse=True
+            )[: self.config.grid_min_feature_num]:
                 self.curr_features[i].append(feature)
                 self.curr_features[i][-1].id = self.next_feature_id
                 self.curr_features[i][-1].lifetime = 1
@@ -535,7 +545,9 @@ class ImageProcessor(object):
         cam1_mean_ang_vel = self.R_cam1_imu.T @ mean_ang_vel
 
         # Compute the relative rotation.
-        dt = self.cam0_curr_img_msg.timestamp - self.cam0_prev_img_msg.timestamp
+        dt = (
+            self.cam0_curr_img_msg.timestamp - self.cam0_prev_img_msg.timestamp
+        )
         cam0_R_p_c = cv2.Rodrigues(cam0_mean_ang_vel * dt)[0].T
         cam1_R_p_c = cv2.Rodrigues(cam1_mean_ang_vel * dt)[0].T
 
@@ -716,7 +728,9 @@ class ImageProcessor(object):
             pt0 = np.array([*cam0_points_undistorted[i], 1.0])
             pt1 = np.array([*cam1_points_undistorted[i], 1.0])
             epipolar_line = E @ pt0
-            error = np.abs((pt1 * epipolar_line)[0]) / np.linalg.norm(epipolar_line[:2])
+            error = np.abs((pt1 * epipolar_line)[0]) / np.linalg.norm(
+                epipolar_line[:2]
+            )
 
             if error > self.config.stereo_threshold * norm_pixel_unit:
                 inlier_markers[i] = 0
@@ -773,7 +787,9 @@ class ImageProcessor(object):
             )
         return pts_out.reshape((-1, 2))
 
-    def distort_points(self, pts_in, intrinsics, distortion_model, distortion_coeffs):
+    def distort_points(
+        self, pts_in, intrinsics, distortion_model, distortion_coeffs
+    ):
         """
         Arguments:
             pts_in: points to be distorted.
@@ -838,7 +854,7 @@ if __name__ == "__main__":
     from threading import Thread
 
     from config import ConfigEuRoC
-    from dataset import DataPublisher, EuRoCDataset
+    from dataset import EuRoCDataset, DataPublisher
 
     img_queue = Queue()
     imu_queue = Queue()
@@ -883,3 +899,4 @@ if __name__ == "__main__":
     imu_publisher.stop()
     img_publisher.stop()
     t2.join()
+

@@ -30,7 +30,9 @@ y = np.polyval(poly, x)
 y = y + (np.random.uniform(size=y.shape) - 0.5) * 2 * max_noise
 data = np.concatenate(
     [
-        np.concatenate([x, np.random.uniform(size=[1, num_outliers]) + xstart], axis=1),
+        np.concatenate(
+            [x, np.random.uniform(size=[1, num_outliers]) + xstart], axis=1
+        ),
         np.concatenate(
             [y, np.random.uniform(size=[1, num_outliers]) * yspan + lowest],
             axis=1,
@@ -48,6 +50,7 @@ p_W_landmarks = np.loadtxt("../data/p_W_landmarks.txt")
 database_image = cv2.imread("../data/000000.png", cv2.IMREAD_GRAYSCALE)
 
 # Part 1 - RANSAC with parabola model
+""" Remove this comment if you have completed the code until here
 best_guess_history, max_num_inliers_history = parabolaRansac(data, max_noise)
 
 # Compare with full data fit.
@@ -71,11 +74,15 @@ axs[0].plot(
     linewidth=2,
     label="RANSAC result",
 )
-axs[0].plot(x, np.polyval(full_fit, x), "r--", linewidth=2, label="full data fit")
+axs[0].plot(
+    x, np.polyval(full_fit, x), "r--", linewidth=2, label="full data fit"
+)
 axs[0].set_title("RANSAC VS full fit")
 
 
-line = Line2D([0], [0], color="b", linewidth=1, linestyle="-", label="RANSAC guesses")
+line = Line2D(
+    [0], [0], color="b", linewidth=1, linestyle="-", label="RANSAC guesses"
+)
 handles, labels = axs[0].get_legend_handles_labels()
 handles.append(line)
 axs[0].legend(handles=handles, shadow=True, fancybox=True)
@@ -86,18 +93,24 @@ plt.show()
 
 print("RMS of full fit =")
 x = np.arange(0, 1, 0.01) + xstart
-print(np.sqrt(np.mean(np.square(np.polyval(poly, x) - np.polyval(full_fit, x)))))
+print(
+    np.sqrt(np.mean(np.square(np.polyval(poly, x) - np.polyval(full_fit, x))))
+)
 print("RMS of RANSAC =")
 x = np.arange(0, 1, 0.01) + xstart
 print(
     np.sqrt(
         np.mean(
-            np.square(np.polyval(poly, x) - np.polyval(best_guess_history[:, -1], x))
+            np.square(
+                np.polyval(poly, x) - np.polyval(best_guess_history[:, -1], x)
+            )
         )
     )
 )
+"""
 
 # Parts 2 and 3 - Localization with RANSAC + DLT/P3P
+""" Remove this comment if you have completed the code until here
 query_image = cv2.imread("../data/000001.png", cv2.IMREAD_GRAYSCALE)
 
 # Parameters from exercise 3.
@@ -116,11 +129,15 @@ query_harris = harris(query_image, harris_patch_size, harris_kappa)
 query_keypoints = selectKeypoints(
     query_harris, num_keypoints, nonmaximum_supression_radius
 )
-query_descriptors = describeKeypoints(query_image, query_keypoints, descriptor_radius)
+query_descriptors = describeKeypoints(
+    query_image, query_keypoints, descriptor_radius
+)
 database_descriptors = describeKeypoints(
     database_image, database_keypoints, descriptor_radius
 )
-all_matches = matchDescriptors(query_descriptors, database_descriptors, match_lambda)
+all_matches = matchDescriptors(
+    query_descriptors, database_descriptors, match_lambda
+)
 
 # Drop unmatched keypoints and get 3d landmarks for the matched ones.
 matched_query_keypoints = query_keypoints[:, all_matches >= 0]
@@ -192,7 +209,9 @@ fig = plt.figure()
 
 for i in range(9):
     fig.clear()
-    query_image = cv2.imread("../data/{0:06d}.png".format(i), cv2.IMREAD_GRAYSCALE)
+    query_image = cv2.imread(
+        "../data/{0:06d}.png".format(i), cv2.IMREAD_GRAYSCALE
+    )
 
     # Detect and match keypoints
     database_keypoints = keypoints
@@ -216,7 +235,9 @@ for i in range(9):
     corresponding_landmarks = p_W_landmarks[corresponding_matches, :]
 
     # perform RANSAC to find best Pose and inliers
-    out = ransacLocalization(matched_query_keypoints, corresponding_landmarks, K)
+    out = ransacLocalization(
+        matched_query_keypoints, corresponding_landmarks, K
+    )
     (
         R_C_W,
         t_C_W,
@@ -253,7 +274,9 @@ for i in range(9):
     ax.set_xlim3d(-15, 10)
     ax.set_ylim3d(-10, 5)
     ax.set_zlim3d(-1, 40)
-    ax.scatter(p_W_landmarks[:, 0], p_W_landmarks[:, 1], p_W_landmarks[:, 2], s=0.5)
+    ax.scatter(
+        p_W_landmarks[:, 0], p_W_landmarks[:, 1], p_W_landmarks[:, 2], s=0.5
+    )
     if R_C_W is not None:
         drawCamera(
             ax,
@@ -263,8 +286,11 @@ for i in range(9):
             head_size=10,
             set_ax_limits=True,
         )
-        print("Frame {} localized with {} inliers!".format(i, inlier_mask.sum()))
+        print(
+            "Frame {} localized with {} inliers!".format(i, inlier_mask.sum())
+        )
     else:
         print("Frame {} failed to localize!".format(i))
 
     plt.pause(1)
+"""

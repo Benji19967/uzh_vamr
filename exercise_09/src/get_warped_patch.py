@@ -1,7 +1,5 @@
-import time
-
 import numpy as np
-
+import time
 
 def getWarpedPatch(I, W, x_T, r_T):
     """
@@ -17,3 +15,4 @@ def getWarpedPatch(I, W, x_T, r_T):
 
     pass
     # TODO: Your code here
+

@@ -1,5 +1,5 @@
-import cv2
 import numpy as np
+import cv2
 
 
 class OptimizationConfigEuRoC(object):
@@ -181,3 +181,4 @@ class ConfigEuRoC(object):
         # self.baseline =
 
         self.T_imu_body = np.identity(4)
+

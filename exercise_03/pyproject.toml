@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "uzh_vamr"
+name = "uzh_vamr_ex03"
 version = "0.1.0"
 description = "Exercise 3 of VARM"
 authors = [ "Benjamin Labrecque" ]

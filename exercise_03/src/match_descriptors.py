@@ -10,16 +10,4 @@ def matchDescriptors(query_descriptors, database_descriptors, match_lambda):
     with an SSD < lambda * min(SSD). No elements of matches will be equal except for the -1 elements.
     """
     pass
-    dists = cdist(query_descriptors.T, database_descriptors.T, "euclidean")
-    matches = np.argmin(dists, axis=1)
-    dists = dists[np.arange(matches.shape[0]), matches]
-    min_non_zero_dist = dists.min()
-
-    matches[dists >= match_lambda * min_non_zero_dist] = -1
-
-    # remove double matches
-    unique_matches = np.ones_like(matches) * -1
-    _, unique_match_idxs = np.unique(matches, return_index=True)
-    unique_matches[unique_match_idxs] = matches[unique_match_idxs]
-
-    return unique_matches
+    # TODO: Your code here

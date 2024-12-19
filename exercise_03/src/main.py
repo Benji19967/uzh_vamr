@@ -23,14 +23,23 @@ def read_img():
     return cv2.imread("data/000000.png", cv2.IMREAD_GRAYSCALE)
 
 
-def part1(img):
+def part1(img, show_output: bool = False):
     # Part 1 - Calculate Corner Response Functions
 
     # Shi-Tomasi
-    shi_tomasi_scores = shi_tomasi(img, CORNER_PATCH_SIZE)
+    shi_tomasi_scores = shi_tomasi(
+        img,
+        CORNER_PATCH_SIZE,
+        show_output=show_output,
+    )
 
     # Harris
-    harris_scores = harris(img, CORNER_PATCH_SIZE, HARRIS_KAPPA)
+    harris_scores = harris(
+        img,
+        CORNER_PATCH_SIZE,
+        HARRIS_KAPPA,
+        show_output=show_output,
+    )
 
     # Plotting
     fig, axs = plt.subplots(2, 2, squeeze=False)
@@ -49,8 +58,9 @@ def part1(img):
         axs[1, 1].set_title("Harris Scores")
         axs[1, 1].axis("off")
 
-    fig.tight_layout()
-    plt.show()
+    if show_output:
+        fig.tight_layout()
+        plt.show()
 
     return harris_scores
 
@@ -61,12 +71,13 @@ def part2(img, harris_scores):
         harris_scores, NUM_KEYPOINTS, NONMAXIMUM_SUPRESSION_RADIUS
     )
 
-    plt.clf()
-    plt.close()
-    plt.imshow(img, cmap="gray")
-    plt.plot(keypoints[1, :], keypoints[0, :], "rx", linewidth=2)
-    plt.axis("off")
-    plt.show()
+    if keypoints:
+        plt.clf()
+        plt.close()
+        plt.imshow(img, cmap="gray")
+        plt.plot(keypoints[1, :], keypoints[0, :], "rx", linewidth=2)
+        plt.axis("off")
+        plt.show()
 
 
 def part3(img):
@@ -132,7 +143,7 @@ def part5():
 def main():
     img = read_img()
     harris_scores = part1(img)
-    # part2(img=img, harris_scores=harris_scores)
+    part2(img=img, harris_scores=harris_scores)
     # part3(img)
     # part4()
     # part5()

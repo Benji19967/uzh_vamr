@@ -7,4 +7,3 @@ def selectKeypoints(scores, num, r):
     the current maximum.
     """
     pass
-    # TODO: Your code here

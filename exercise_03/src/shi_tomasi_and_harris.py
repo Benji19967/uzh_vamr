@@ -3,7 +3,7 @@ from scipy import signal
 import utils
 
 
-def compute_coefficients(img, patch_size):
+def compute_coefficients(img, patch_size, show_output):
     Sobel_x = [
         [-1, 0, 1],
         [-2, 0, 2],
@@ -21,11 +21,12 @@ def compute_coefficients(img, patch_size):
     Iyy = Iy * Iy
     Ixy = Ix * Iy
 
-    utils.show_np_array_as_img(Ix, title="Ix")
-    utils.show_np_array_as_img(Iy, title="Iy")
-    utils.show_np_array_as_img(Ixx, title="Ixx")
-    utils.show_np_array_as_img(Iyy, title="Iyy")
-    utils.show_np_array_as_img(Ixy, title="Ixy")
+    if show_output:
+        utils.show_np_array_as_img(Ix, title="Ix")
+        utils.show_np_array_as_img(Iy, title="Iy")
+        utils.show_np_array_as_img(Ixx, title="Ixx")
+        utils.show_np_array_as_img(Iyy, title="Iyy")
+        utils.show_np_array_as_img(Ixy, title="Ixy")
 
     patch = np.ones([patch_size, patch_size])
     pr = patch_size // 2
@@ -42,11 +43,13 @@ def pad_scores(scores, pr):
     )
 
 
-def shi_tomasi(img, patch_size):
+def shi_tomasi(img, patch_size, show_output):
     """Returns the shi-tomasi scores for an image and patch size patch_size
     The returned scores are of the same shape as the input image"""
 
-    sIxx, sIyy, sIxy, pr = compute_coefficients(img=img, patch_size=patch_size)
+    sIxx, sIyy, sIxy, pr = compute_coefficients(
+        img=img, patch_size=patch_size, show_output=show_output
+    )
 
     trace = sIxx + sIyy
     determinant = sIxx * sIyy - sIxy**2
@@ -61,11 +64,13 @@ def shi_tomasi(img, patch_size):
     return scores
 
 
-def harris(img, patch_size, kappa):
+def harris(img, patch_size, kappa, show_output):
     """Returns the harris scores for an image given a patch size and a kappa value
     The returned scores are of the same shape as the input image"""
 
-    sIxx, sIyy, sIxy, pr = compute_coefficients(img=img, patch_size=patch_size)
+    sIxx, sIyy, sIxy, pr = compute_coefficients(
+        img=img, patch_size=patch_size, show_output=show_output
+    )
 
     trace = sIxx + sIyy
     determinant = sIxx * sIyy - sIxy**2

@@ -2,13 +2,13 @@ from tkinter import W
 
 import cv2
 import matplotlib.pyplot as plt
+import numpy as np
 
 from describe_keypoints import describeKeypoints
-from harris import harris
 from match_descriptors import matchDescriptors
 from plot_matches import plotMatches
 from select_keypoints import selectKeypoints
-from shi_tomasi import shi_tomasi
+from shi_tomasi_and_harris import shi_tomasi, harris
 
 # Randomly chosen parameters that seem to work well - can you find better ones?
 CORNER_PATCH_SIZE = 9
@@ -39,12 +39,12 @@ def part1(img):
     axs[0, 1].imshow(img, cmap="gray")
     axs[0, 1].axis("off")
 
-    if shi_tomasi_scores:
+    if isinstance(shi_tomasi_scores, np.ndarray):
         axs[1, 0].imshow(shi_tomasi_scores)
         axs[1, 0].set_title("Shi-Tomasi Scores")
         axs[1, 0].axis("off")
 
-    if harris_scores:
+    if isinstance(harris_scores, np.ndarray):
         axs[1, 1].imshow(harris_scores)
         axs[1, 1].set_title("Harris Scores")
         axs[1, 1].axis("off")

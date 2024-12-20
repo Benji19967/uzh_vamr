@@ -11,3 +11,5 @@ The course is thought by [Prof. Dr. Davide Scaramuzza](https://rpg.ifi.uzh.ch/pe
 - [ ] Factoring out functions / using utils
 - [ ] When an exercise has not been started, running the program should not throw an error but print a helpful message instead. This lets students
 know, your setup is fine (vs an error: is there a problem with how I run the code?)
+- [ ] Add flags for when to show output, otherwise have to close images every time the code is run
+- [ ] Add some tests or assert statements

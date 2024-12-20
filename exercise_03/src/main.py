@@ -13,14 +13,14 @@ from shi_tomasi_and_harris import harris, shi_tomasi
 # Randomly chosen parameters that seem to work well - can you find better ones?
 CORNER_PATCH_SIZE = 9
 HARRIS_KAPPA = 0.08
-NUM_KEYPOINTS = 500
+NUM_KEYPOINTS = 200
 NONMAXIMUM_SUPRESSION_RADIUS = 8
 DESCRIPTOR_RADIUS = 9
 MATCH_LAMBDA = 4
 
 
-def read_img():
-    return cv2.imread("data/000000.png", cv2.IMREAD_GRAYSCALE)
+def read_img(path):
+    return cv2.imread(path, cv2.IMREAD_GRAYSCALE)
 
 
 def part1(img, show_output: bool = False):
@@ -90,11 +90,13 @@ def part3(img, keypoints):
 
     plt.show()
 
+    return descriptors
 
-def part4():
+
+def part4(img, keypoints, descriptors):
     # Part 4 - Match descriptors between first two images
-    img_2 = cv2.imread("../data/000001.png", cv2.IMREAD_GRAYSCALE)
-    harris_scores_2 = harris(img_2, CORNER_PATCH_SIZE, HARRIS_KAPPA)
+    img_2 = img
+    harris_scores_2 = harris(img_2, CORNER_PATCH_SIZE, HARRIS_KAPPA, show_output=False)
     keypoints_2 = selectKeypoints(
         harris_scores_2, NUM_KEYPOINTS, NONMAXIMUM_SUPRESSION_RADIUS
     )
@@ -102,14 +104,15 @@ def part4():
 
     matches = matchDescriptors(descriptors_2, descriptors, MATCH_LAMBDA)
 
-    plt.clf()
-    plt.close()
-    plt.imshow(img_2, cmap="gray")
-    plt.plot(keypoints_2[1, :], keypoints_2[0, :], "rx", linewidth=2)
-    plotMatches(matches, keypoints_2, keypoints)
-    plt.tight_layout()
-    plt.axis("off")
-    plt.show()
+    if isinstance(matches, np.ndarray):
+        plt.clf()
+        plt.close()
+        plt.imshow(img_2, cmap="gray")
+        plt.plot(keypoints_2[1, :], keypoints_2[0, :], "rx", linewidth=2)
+        plotMatches(matches, keypoints_2, keypoints)
+        plt.tight_layout()
+        plt.axis("off")
+        plt.show()
 
 
 def part5():
@@ -137,11 +140,12 @@ def part5():
 
 
 def main():
-    img = read_img()
-    shi_tomasi_scores, harris_scores = part1(img)
+    img = read_img("data/000000.png")
+    img_2 = read_img("data/000001.png")
+    _, harris_scores = part1(img=img)
     keypoints = part2(img=img, scores=harris_scores)
-    part3(img, keypoints)
-    # part4()
+    descriptors = part3(img=img, keypoints=keypoints)
+    part4(img=img_2, keypoints=keypoints, descriptors=descriptors)
     # part5()
 
 

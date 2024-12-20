@@ -4,7 +4,7 @@ from scipy import signal
 import utils
 
 
-def compute_coefficients(img, patch_size, show_output):
+def compute_coefficients(img: np.ndarray, patch_size, show_output):
     Sobel_x = [
         [-1, 0, 1],
         [-2, 0, 2],
@@ -44,7 +44,7 @@ def pad_scores(scores, pr):
     )
 
 
-def shi_tomasi(img, patch_size, show_output):
+def shi_tomasi(img: np.ndarray, patch_size, show_output):
     """Returns the shi-tomasi scores for an image and patch size patch_size
     The returned scores are of the same shape as the input image"""
 
@@ -65,7 +65,7 @@ def shi_tomasi(img, patch_size, show_output):
     return scores
 
 
-def harris(img, patch_size, kappa, show_output):
+def harris(img: np.ndarray, patch_size, kappa, show_output):
     """Returns the harris scores for an image given a patch size and a kappa value
     The returned scores are of the same shape as the input image"""
 

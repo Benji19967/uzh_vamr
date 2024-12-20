@@ -2,6 +2,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
+import utils
 from compute_blurred_images import computeBlurredImages
 from compute_descriptors import computeDescriptors
 from compute_difference_of_gaussians import computeDifferenceOfGaussians
@@ -9,15 +10,30 @@ from compute_image_pyramid import computeImagePyramid
 from extract_keypoints import extractKeypoints
 
 # User parameters
-ROTATION_INVARIANT = True  # Enable rotation invariant SIFT
+ROTATION_INVARIANT = False  # Enable rotation invariant SIFT
 ROTATION_IMG2_DEG = 60  # Rotate the second image to be matched
 
-# sift parameters
+# SIFT parameters
 CONTRAST_THRESHOLD = 0.04  # for feature matching
-SIFT_SIGMA = 1.0  # SIGMA USED FOR BLURRING
+SIFT_SIGMA = 1.6  # SIGMA USED FOR BLURRING
 RESCALE_FACTOR = 0.3  # rescale images to make it faster
 NUM_SCALES = 3  # number of scales per octave
 NUM_OCTAVES = 5  # number of octaves
+
+
+def read_img(path: str, scale):
+    """
+    Convenience function to read in images into grayscale and convert them to double
+    """
+    return cv2.normalize(
+        cv2.resize(
+            cv2.imread(path, cv2.IMREAD_GRAYSCALE), (0, 0), fx=scale, fy=scale
+        ).astype("float"),
+        None,
+        0.0,
+        1.0,
+        cv2.NORM_MINMAX,
+    )
 
 
 def main(
@@ -30,38 +46,43 @@ def main(
     num_octaves,
 ):
 
-    # Convenience function to read in images into grayscale and convert them to double
-    get_image = lambda fname, scale: cv2.normalize(
-        cv2.resize(
-            cv2.imread(fname, cv2.IMREAD_GRAYSCALE), (0, 0), fx=scale, fy=scale
-        ).astype("float"),
-        None,
-        0.0,
-        1.0,
-        cv2.NORM_MINMAX,
-    )
-
     # Read in images
-    img1 = get_image("../data/img_1.jpg", rescale_factor)
-    img2 = get_image("../data/img_2.jpg", rescale_factor)
+    img1 = read_img("data/img_1.jpg", rescale_factor)
+    img2 = read_img("data/img_2.jpg", rescale_factor)
+
+    utils.show_np_array_as_img(img1)
+    utils.show_np_array_as_img(img2)
 
     # If we want to test our rotation invariant features, rotate the second image
-    if np.abs(rotation_img2_deg) > 1e-6:
-        pass
-        # Lets go and rotate the image
-        # - get the original height and width
-        # - create rotation matrix
-        # - calculate the size of the rotated image
-        # - pad the image
-        # - rotate the image
-    # TODO: Your code here
+    if ROTATION_INVARIANT:
+        if np.abs(rotation_img2_deg) > 1e-6:
+            pass
+            # Lets go and rotate the image
+            # - get the original height and width
+            # - create rotation matrix
+            # - calculate the size of the rotated image
+            # - pad the image
+            # - rotate the image
+        # TODO: Your code here
 
-    # Actually compute the SIFT features. For both images do:
+    # Actually compute the SIFT features.
+    # For both images do:
     # - construct the image pyramid
+    computeImagePyramid(img=img1, num_octaves=NUM_OCTAVES)
+    computeImagePyramid(img=img2, num_octaves=NUM_OCTAVES)
+
     # - compute the blurred images
+    # computeBlurredImages()
+
     # - compute difference of gaussians
+    # computeDifferenceOfGaussians()
+
     # - extract the keypoints
+    # extractKeypoints()
+
     # - compute the descriptors
+    # computeDescriptors()
+
     imgs = [img1, img2]
     keypoint_locations = []
     keypoint_descriptors = []

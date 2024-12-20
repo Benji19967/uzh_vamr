@@ -7,6 +7,7 @@ The course is thought by [Prof. Dr. Davide Scaramuzza](https://rpg.ifi.uzh.ch/pe
 ## Possible improvements
 
 - [ ] Consistent naming
+  - [ ] Python is usually snake case rather than camel case
 - [ ] Logging
 - [ ] Factoring out functions / using utils
 - [ ] When an exercise has not been started, running the program should not throw an error but print a helpful message instead. This lets students

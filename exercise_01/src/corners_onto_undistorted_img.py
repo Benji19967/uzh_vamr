@@ -56,7 +56,7 @@ def project_and_superimpose_corners_onto_img(
     _show_image_and_points(img=img, points=projected_points, img_idx=img_idx)
 
 
-def _show_image_and_points(img, points: np.ndarray, img_idx: int) -> None:
+def _show_image_and_points(img: np.ndarray, points: np.ndarray, img_idx: int) -> None:
     plt.clf()
     plt.close()
     plt.imshow(img, cmap=IMG_CMAP)

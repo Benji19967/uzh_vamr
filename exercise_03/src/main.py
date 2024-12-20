@@ -23,7 +23,7 @@ def read_img(path):
     return cv2.imread(path, cv2.IMREAD_GRAYSCALE)
 
 
-def part1(img, show_output: bool = False):
+def part1(img: np.ndarray, show_output: bool = False):
     # Part 1 - Calculate Corner Response Functions
 
     # Shi-Tomasi
@@ -61,7 +61,7 @@ def part1(img, show_output: bool = False):
     return shi_tomasi_scores, harris_scores
 
 
-def part2(img, scores):
+def part2(img: np.ndarray, scores):
     # Part 2 - Select keypoints
     keypoints = selectKeypoints(scores, NUM_KEYPOINTS, NONMAXIMUM_SUPRESSION_RADIUS)
 
@@ -76,7 +76,7 @@ def part2(img, scores):
     return keypoints
 
 
-def part3(img, keypoints):
+def part3(img: np.ndarray, keypoints):
     # Part 3 - Describe keypoints and show 16 strongest keypoint descriptors
     descriptors = describeKeypoints(img, keypoints, DESCRIPTOR_RADIUS)
 
@@ -93,7 +93,7 @@ def part3(img, keypoints):
     return descriptors
 
 
-def part4(img, keypoints, descriptors):
+def part4(img: np.ndarray, keypoints, descriptors):
     # Part 4 - Match descriptors between first two images
     img_2 = img
     harris_scores_2 = harris(img_2, CORNER_PATCH_SIZE, HARRIS_KAPPA, show_output=False)

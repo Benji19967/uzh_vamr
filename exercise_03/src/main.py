@@ -58,16 +58,14 @@ def part1(img, show_output: bool = False):
         fig.tight_layout()
         plt.show()
 
-    return harris_scores
+    return shi_tomasi_scores, harris_scores
 
 
-def part2(img, harris_scores):
+def part2(img, scores):
     # Part 2 - Select keypoints
-    keypoints = selectKeypoints(
-        harris_scores, NUM_KEYPOINTS, NONMAXIMUM_SUPRESSION_RADIUS
-    )
+    keypoints = selectKeypoints(scores, NUM_KEYPOINTS, NONMAXIMUM_SUPRESSION_RADIUS)
 
-    if keypoints:
+    if isinstance(keypoints, np.ndarray):
         plt.clf()
         plt.close()
         plt.imshow(img, cmap="gray")
@@ -75,8 +73,10 @@ def part2(img, harris_scores):
         plt.axis("off")
         plt.show()
 
+    return keypoints
 
-def part3(img):
+
+def part3(img, keypoints):
     # Part 3 - Describe keypoints and show 16 strongest keypoint descriptors
     descriptors = describeKeypoints(img, keypoints, DESCRIPTOR_RADIUS)
 
@@ -138,9 +138,9 @@ def part5():
 
 def main():
     img = read_img()
-    harris_scores = part1(img)
-    part2(img=img, harris_scores=harris_scores)
-    # part3(img)
+    shi_tomasi_scores, harris_scores = part1(img)
+    keypoints = part2(img=img, scores=harris_scores)
+    part3(img, keypoints)
     # part4()
     # part5()
 

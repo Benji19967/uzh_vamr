@@ -121,8 +121,8 @@ def part5():
     prev_kp = None
     for i in range(200):
         plt.clf()
-        img = cv2.imread("../data/{0:06d}.png".format(i), cv2.IMREAD_GRAYSCALE)
-        scores = harris(img, CORNER_PATCH_SIZE, HARRIS_KAPPA)
+        img = cv2.imread("data/{0:06d}.png".format(i), cv2.IMREAD_GRAYSCALE)
+        scores = harris(img, CORNER_PATCH_SIZE, HARRIS_KAPPA, show_output=False)
         kp = selectKeypoints(scores, NUM_KEYPOINTS, NONMAXIMUM_SUPRESSION_RADIUS)
         desc = describeKeypoints(img, kp, DESCRIPTOR_RADIUS)
 
@@ -146,7 +146,7 @@ def main():
     keypoints = part2(img=img, scores=harris_scores)
     descriptors = part3(img=img, keypoints=keypoints)
     part4(img=img_2, keypoints=keypoints, descriptors=descriptors)
-    # part5()
+    part5()
 
 
 if __name__ == "__main__":

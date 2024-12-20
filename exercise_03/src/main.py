@@ -8,7 +8,7 @@ from describe_keypoints import describeKeypoints
 from match_descriptors import matchDescriptors
 from plot_matches import plotMatches
 from select_keypoints import selectKeypoints
-from shi_tomasi_and_harris import shi_tomasi, harris
+from shi_tomasi_and_harris import harris, shi_tomasi
 
 # Randomly chosen parameters that seem to work well - can you find better ones?
 CORNER_PATCH_SIZE = 9
@@ -27,11 +27,7 @@ def part1(img, show_output: bool = False):
     # Part 1 - Calculate Corner Response Functions
 
     # Shi-Tomasi
-    shi_tomasi_scores = shi_tomasi(
-        img,
-        CORNER_PATCH_SIZE,
-        show_output=show_output,
-    )
+    shi_tomasi_scores = shi_tomasi(img, CORNER_PATCH_SIZE, show_output=show_output)
 
     # Harris
     harris_scores = harris(

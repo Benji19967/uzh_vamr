@@ -13,7 +13,7 @@ from shi_tomasi_and_harris import harris, shi_tomasi
 # Randomly chosen parameters that seem to work well - can you find better ones?
 CORNER_PATCH_SIZE = 9
 HARRIS_KAPPA = 0.08
-NUM_KEYPOINTS = 200
+NUM_KEYPOINTS = 500
 NONMAXIMUM_SUPRESSION_RADIUS = 8
 DESCRIPTOR_RADIUS = 9
 MATCH_LAMBDA = 4

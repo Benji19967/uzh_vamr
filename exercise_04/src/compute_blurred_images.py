@@ -2,9 +2,11 @@ import cv2
 import numpy as np
 
 
-def computeBlurredImages(image_pyramid, num_scales: int, sift_sigma: float):
+def computeBlurredImages(
+    image_pyramid, num_scales: int, sift_sigma: float
+) -> list[list[np.ndarray]]:
     # The number of octaves can be inferred from the length of the image pyramid
-    S = num_scales + 3
+    S = num_scales
     blurred_images = []
     for img in image_pyramid:
         images_per_sigma = []

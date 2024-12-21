@@ -50,8 +50,8 @@ def main(
     img1 = read_img("data/img_1.jpg", rescale_factor)
     img2 = read_img("data/img_2.jpg", rescale_factor)
 
-    utils.show_np_array_as_img(img1)
-    utils.show_np_array_as_img(img2)
+    # utils.show_np_array_as_img(img1)
+    # utils.show_np_array_as_img(img2)
 
     # If we want to test our rotation invariant features, rotate the second image
     if ROTATION_INVARIANT:
@@ -80,14 +80,38 @@ def main(
     )
 
     # - compute difference of gaussians
-    computeDifferenceOfGaussians(blurred_images=blurred_images_1)
-    computeDifferenceOfGaussians(blurred_images=blurred_images_2)
+    difference_of_gaussians_1 = computeDifferenceOfGaussians(
+        blurred_images=blurred_images_1
+    )
+    difference_of_gaussians_2 = computeDifferenceOfGaussians(
+        blurred_images=blurred_images_2
+    )
 
     # - extract the keypoints
-    # extractKeypoints()
+    keypoint_locations = (
+        extractKeypoints(
+            all_diff_of_gaussians=difference_of_gaussians_1,
+            contrast_threshold=CONTRAST_THRESHOLD,
+        ),
+        extractKeypoints(
+            all_diff_of_gaussians=difference_of_gaussians_2,
+            contrast_threshold=CONTRAST_THRESHOLD,
+        ),
+    )
 
     # - compute the descriptors
-    # computeDescriptors()
+    keypoint_descriptors = (
+        computeDescriptors(
+            blurred_images=blurred_images_1,
+            keypoint_locations=keypoint_locations[0],
+            rotation_invariant=ROTATION_INVARIANT,
+        ),
+        computeDescriptors(
+            blurred_images=blurred_images_2,
+            keypoint_locations=keypoint_locations[1],
+            rotation_invariant=ROTATION_INVARIANT,
+        ),
+    )
 
     imgs = [img1, img2]
     keypoint_locations = []
@@ -110,18 +134,19 @@ def main(
     """ Remove this comment if you have completed the code until here
     plt.figure()
     dh = int(img2.shape[0] - img1.shape[0])
-    top_padding = int(dh/2)
-    img1_padded = cv2.copyMakeBorder(img1, top_padding, dh - int(dh/2),
-            0, 0, cv2.BORDER_CONSTANT, 0)
-    plt.imshow(np.c_[img1_padded, img2], cmap = "gray")
+    top_padding = int(dh / 2)
+    img1_padded = cv2.copyMakeBorder(
+        img1, top_padding, dh - int(dh / 2), 0, 0, cv2.BORDER_CONSTANT, 0
+    )
+    plt.imshow(np.c_[img1_padded, img2], cmap="gray")
 
     for match in good:
         img1_idx = match.queryIdx
         img2_idx = match.trainIdx
-        x1 = keypoint_locations[0][img1_idx,1]
-        y1 = keypoint_locations[0][img1_idx,0] + top_padding
-        x2 = keypoint_locations[1][img2_idx,1] + img1.shape[1]
-        y2 = keypoint_locations[1][img2_idx,0]
+        x1 = keypoint_locations[0][img1_idx, 1]
+        y1 = keypoint_locations[0][img1_idx, 0] + top_padding
+        x2 = keypoint_locations[1][img2_idx, 1] + img1.shape[1]
+        y2 = keypoint_locations[1][img2_idx, 0]
         plt.plot(np.array([x1, x2]), np.array([y1, y2]), "o-")
     plt.show()
     """

@@ -38,7 +38,11 @@ def derotatePatch(img: np.ndarray, loc, patch_size, orientation):
     # TODO: Your code here
 
 
-def computeDescriptors(blurred_images, keypoint_locations, rotation_invariant):
+def computeDescriptors(
+    blurred_images: list[list[np.ndarray]],
+    keypoint_locations: list[np.ndarray],
+    rotation_invariant: bool,
+):
     # return descriptors and final keypoint locations
     pass
     # TODO: Your code here

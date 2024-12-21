@@ -124,7 +124,11 @@ def main(
     # OpenCV brute force matching
     """ Remove this comment if you have completed the code until here
     bf = cv2.BFMatcher()
-    matches = bf.knnMatch(keypoint_descriptors[0].astype(np.float32), keypoint_descriptors[1].astype(np.float32), 2)
+    matches = bf.knnMatch(
+        keypoint_descriptors[0].astype(np.float32),
+        keypoint_descriptors[1].astype(np.float32),
+        2,
+    )
     """
 
     # Apply ratio test
@@ -140,7 +144,8 @@ def main(
     )
     plt.imshow(np.c_[img1_padded, img2], cmap="gray")
 
-    for match in good:
+    # for match in good:
+    for match in matches:
         img1_idx = match.queryIdx
         img2_idx = match.trainIdx
         x1 = keypoint_locations[0][img1_idx, 1]

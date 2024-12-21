@@ -68,14 +68,20 @@ def main(
     # Actually compute the SIFT features.
     # For both images do:
     # - construct the image pyramid
-    computeImagePyramid(img=img1, num_octaves=NUM_OCTAVES)
-    computeImagePyramid(img=img2, num_octaves=NUM_OCTAVES)
+    image_pyramid_1 = computeImagePyramid(img=img1, num_octaves=NUM_OCTAVES)
+    image_pyramid_2 = computeImagePyramid(img=img2, num_octaves=NUM_OCTAVES)
 
     # - compute the blurred images
-    # computeBlurredImages()
+    blurred_images_1 = computeBlurredImages(
+        image_pyramid=image_pyramid_1, num_scales=NUM_SCALES, sift_sigma=SIFT_SIGMA
+    )
+    blurred_images_2 = computeBlurredImages(
+        image_pyramid=image_pyramid_2, num_scales=NUM_SCALES, sift_sigma=SIFT_SIGMA
+    )
 
     # - compute difference of gaussians
-    # computeDifferenceOfGaussians()
+    computeDifferenceOfGaussians(blurred_images=blurred_images_1)
+    computeDifferenceOfGaussians(blurred_images=blurred_images_2)
 
     # - extract the keypoints
     # extractKeypoints()

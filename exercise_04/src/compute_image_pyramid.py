@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 
-def computeImagePyramid(img: np.ndarray, num_octaves: int):
+def computeImagePyramid(img: np.ndarray, num_octaves: int) -> list[np.ndarray]:
     """
     num octaves = len(image_pyramid)
     """

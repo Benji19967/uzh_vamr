@@ -22,7 +22,7 @@ def decomposeEssentialMatrix(E):
             [0, 0, 1],
         ]
     )
-    R = np.zeros((3, 2, 1))
+    R = np.zeros((3, 3, 2))
     r1 = u @ W @ vh
     r2 = u @ W.T @ vh
     for r in [r1, r2]:

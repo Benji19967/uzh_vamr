@@ -23,3 +23,31 @@ def disambiguateRelativePose(Rots, u3, points0_h, points1_h, K1, K2):
       from the world coordinate system (identical to the coordinate system of camera 1)
       to camera 2.
     """
+    # Projection matrix of camera 1
+    M1 = K1 @ np.eye(3, 4)
+
+    max_points_in_front = 0
+    for iRot in range(2):
+        R_C2_C1_test = Rots[:, :, iRot]
+
+        for iSignT in range(2):
+            T_C2_C1_test = u3 * (-1) ** iSignT
+
+            M2 = K2 @ np.c_[R_C2_C1_test, T_C2_C1_test]
+            P_C1 = linearTriangulation(points0_h, points1_h, M1, M2)
+
+            # project in both cameras
+            P_C2 = np.c_[R_C2_C1_test, T_C2_C1_test] @ P_C1
+
+            num_points_in_front1 = np.sum(P_C1[2, :] > 0)
+            num_points_in_front2 = np.sum(P_C2[2, :] > 0)
+            total_points_in_front = num_points_in_front1 + num_points_in_front2
+
+            if total_points_in_front > max_points_in_front:
+                # Keep the rotation that gives the highest number of points
+                # in front of both cameras
+                R = R_C2_C1_test
+                T = T_C2_C1_test
+                max_points_in_front = total_points_in_front
+
+    return R, T

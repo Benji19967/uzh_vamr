@@ -12,6 +12,7 @@ from parabolaRansac import parabolaRansac
 from ransacLocalization import ransacLocalization
 
 # Create data for parts 1 and 2
+# np.random.seed(0)
 
 # Hyperparameters
 num_inliers = 20
@@ -30,9 +31,7 @@ y = np.polyval(poly, x)
 y = y + (np.random.uniform(size=y.shape) - 0.5) * 2 * max_noise
 data = np.concatenate(
     [
-        np.concatenate(
-            [x, np.random.uniform(size=[1, num_outliers]) + xstart], axis=1
-        ),
+        np.concatenate([x, np.random.uniform(size=[1, num_outliers]) + xstart], axis=1),
         np.concatenate(
             [y, np.random.uniform(size=[1, num_outliers]) * yspan + lowest],
             axis=1,
@@ -42,15 +41,15 @@ data = np.concatenate(
 )
 
 # Data for parts 3 and 4
-K = np.loadtxt("../data/K.txt")
-keypoints = np.loadtxt("../data/keypoints.txt").T
-p_W_landmarks = np.loadtxt("../data/p_W_landmarks.txt")
+K = np.loadtxt("data/K.txt")
+keypoints = np.loadtxt("data/keypoints.txt").T
+p_W_landmarks = np.loadtxt("data/p_W_landmarks.txt")
 
 # Data for part 4
-database_image = cv2.imread("../data/000000.png", cv2.IMREAD_GRAYSCALE)
+database_image = cv2.imread("data/000000.png", cv2.IMREAD_GRAYSCALE)
 
 # Part 1 - RANSAC with parabola model
-""" Remove this comment if you have completed the code until here
+# Remove this comment if you have completed the code until here
 best_guess_history, max_num_inliers_history = parabolaRansac(data, max_noise)
 
 # Compare with full data fit.
@@ -74,15 +73,11 @@ axs[0].plot(
     linewidth=2,
     label="RANSAC result",
 )
-axs[0].plot(
-    x, np.polyval(full_fit, x), "r--", linewidth=2, label="full data fit"
-)
+axs[0].plot(x, np.polyval(full_fit, x), "r--", linewidth=2, label="full data fit")
 axs[0].set_title("RANSAC VS full fit")
 
 
-line = Line2D(
-    [0], [0], color="b", linewidth=1, linestyle="-", label="RANSAC guesses"
-)
+line = Line2D([0], [0], color="b", linewidth=1, linestyle="-", label="RANSAC guesses")
 handles, labels = axs[0].get_legend_handles_labels()
 handles.append(line)
 axs[0].legend(handles=handles, shadow=True, fancybox=True)
@@ -93,21 +88,16 @@ plt.show()
 
 print("RMS of full fit =")
 x = np.arange(0, 1, 0.01) + xstart
-print(
-    np.sqrt(np.mean(np.square(np.polyval(poly, x) - np.polyval(full_fit, x))))
-)
+print(np.sqrt(np.mean(np.square(np.polyval(poly, x) - np.polyval(full_fit, x)))))
 print("RMS of RANSAC =")
 x = np.arange(0, 1, 0.01) + xstart
 print(
     np.sqrt(
         np.mean(
-            np.square(
-                np.polyval(poly, x) - np.polyval(best_guess_history[:, -1], x)
-            )
+            np.square(np.polyval(poly, x) - np.polyval(best_guess_history[:, -1], x))
         )
     )
 )
-"""
 
 # Parts 2 and 3 - Localization with RANSAC + DLT/P3P
 """ Remove this comment if you have completed the code until here

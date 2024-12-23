@@ -15,3 +15,4 @@ know, your setup is fine (vs an error: is there a problem with how I run the cod
 - [ ] Add flags for when to show output, otherwise have to close images every time the code is run
   - [ ] Have a flag to display intermediate results (blurred, DoGs, with corners detected, ...)
 - [ ] Add some tests or assert statements
+- [ ] Standard docstrings (reST or Google)

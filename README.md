@@ -16,3 +16,4 @@ know, your setup is fine (vs an error: is there a problem with how I run the cod
   - [ ] Have a flag to display intermediate results (blurred, DoGs, with corners detected, ...)
 - [ ] Add some tests or assert statements
 - [ ] Standard docstrings (reST or Google)
+- [ ] Points are sometimes stored as (2, N), sometimes as (N, 2). Why not always store them in the same format for consistency?

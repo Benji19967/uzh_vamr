@@ -18,3 +18,4 @@ know, your setup is fine (vs an error: is there a problem with how I run the cod
 - [ ] Standard docstrings (reST or Google)
 - [ ] Points are sometimes stored as (2, N), sometimes as (N, 2). Why not always store them in the same format for consistency?
 - [ ] Ex 7, 000001.jpg is missing in /data
+- [ ] Ex 9 has no requirements.txt

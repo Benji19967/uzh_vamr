@@ -41,7 +41,7 @@ def part2():
     I_R = cv2.imread("data/000000.png", cv2.IMREAD_GRAYSCALE)
 
     fig = plt.figure()
-    ax = fig.add_subplot("121")
+    ax = fig.add_subplot(121)
     W0 = getSimWarp(0, 0, 0, 1)
     x_T = np.array([900, 291])
     r_T = 15
@@ -49,7 +49,7 @@ def part2():
     ax.imshow(template)
     ax.set_title("Template")
 
-    ax = fig.add_subplot("122")
+    ax = fig.add_subplot(122)
     W = getSimWarp(10, 6, 0, 1)
     I = warpImage(I_R, W)
     r_D = 20
@@ -97,7 +97,8 @@ def part4():
 
     r_T = 15
     n_iter = 50
-    ax.lines = []
+    # ax.lines = []
+    ax.clear()
     for i in range(20):
         I = cv2.imread("data/%06d.png" % i, cv2.IMREAD_GRAYSCALE)
         I = cv2.resize(I, (0, 0), fx=0.25, fy=0.25)
@@ -114,7 +115,8 @@ def part4():
         x_to = kpold_ud[0, :]
         y_from = keypoints_ud[1, :]
         y_to = kpold_ud[1, :]
-        ax.lines = []
+        # ax.lines = []
+        ax.clear()
         ax.plot(
             np.r_[y_from[np.newaxis, :], y_to[np.newaxis, :]],
             np.r_[x_from[np.newaxis, :], x_to[np.newaxis, :]],
@@ -143,7 +145,8 @@ def part5():
     r_T = 15
     n_iter = 50
     threshold = 0.1
-    ax.lines = []
+    # ax.lines = []
+    ax.clear()
     for i in range(20):
         I = cv2.imread("data/%06d.png" % i, cv2.IMREAD_GRAYSCALE)
         I = cv2.resize(I, (0, 0), fx=0.25, fy=0.25)
@@ -166,7 +169,8 @@ def part5():
         x_to = kpold_ud[0, :]
         y_from = keypoints_ud[1, :]
         y_to = kpold_ud[1, :]
-        ax.lines = []
+        # ax.lines = []
+        ax.clear()
         ax.plot(
             np.r_[y_from[np.newaxis, :], y_to[np.newaxis, :]],
             np.r_[x_from[np.newaxis, :], x_to[np.newaxis, :]],
@@ -180,10 +184,10 @@ def part5():
 
 
 if __name__ == "__main__":
-    part1()
+    # part1()
     # part2()
     # part3()
     # part4()
-    # part5()
+    part5()
 
     plt.show()

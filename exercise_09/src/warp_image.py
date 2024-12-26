@@ -13,6 +13,7 @@ def warpImage(image, W):
         warped image of the same dimensions
     """
     warped_image = np.zeros(image.shape)
+    print(image.shape)
 
     # for y in range(len(image)):
     #     for x in range(len(image[0])):
@@ -23,8 +24,6 @@ def warpImage(image, W):
     #         else:
     #             warped_image[y][x] = 0
 
-    s = time.time()
-
     # Roughly 50x faster than the above implementation
     min_coords = np.array([0, 0])
     max_coords = image.shape[::-1]
@@ -33,6 +32,8 @@ def warpImage(image, W):
     ym = np.reshape(ym, (1, -1))
     pre_warp = np.r_[xm, ym, np.ones_like(xm)]
     warped = (W @ pre_warp).T
+
+    # TODO: add question about this to numpy notebook
     mask = np.logical_or.reduce(
         np.c_[
             warped[:, 0] >= max_coords[0],
@@ -47,7 +48,5 @@ def warpImage(image, W):
     warped_image = image[warped_int[:, 1], warped_int[:, 0]]
     warped_image[mask] = 0
     warped_image = np.reshape(warped_image, image.shape)
-
-    print(time.time() - s)
 
     return warped_image

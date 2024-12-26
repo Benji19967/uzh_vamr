@@ -1,7 +1,7 @@
 import numpy as np
-
 from get_sim_warp import getSimWarp
 from get_warped_patch import getWarpedPatch
+
 
 def trackBruteForce(I_R, I, x_T, r_T, r_D):
     """
@@ -18,9 +18,15 @@ def trackBruteForce(I_R, I, x_T, r_T, r_D):
                 center x_T and radius r_D
 
     """
-    pass
-    # TODO: Your code here
-    
+    ssds = np.zeros((2 * r_D + 1, 2 * r_D + 1))
 
+    template = getWarpedPatch(I_R, getSimWarp(0, 0, 0, 1), x_T, r_T)
+    for dx in range(-r_D, r_D + 1):
+        for dy in range(-r_D, r_D + 1):
+            candidate = getWarpedPatch(I, getSimWarp(dx, dy, 0, 1), x_T, r_T)
+            ssd = np.sum((template - candidate) ** 2)
+            ssds[dx + r_D, dy + r_D] = ssd
 
-    
+    dx = np.argwhere(ssds == np.min(ssds)) - r_D
+    print("min ssds", np.min(ssds))
+    return np.squeeze(dx), ssds

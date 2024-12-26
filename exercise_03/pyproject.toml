@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "uzh_vamr_ex03"
 version = "0.1.0"
-description = "Exercise 3 of VARM"
+description = "Exercise 3 of VAMR"
 authors = [ "Benjamin Labrecque" ]
 packages = [
     { include = "src" }

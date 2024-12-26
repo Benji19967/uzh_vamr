@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "uzh_vamr_ex07"
+name = "uzh_vamr_sandbox"
 version = "0.1.0"
-description = "Exercise 7 of VAMR"
+description = "Sandbox to play around with algorithms and tools from VAMR"
 authors = [ "Benjamin Labrecque" ]
 packages = [
     { include = "src" }

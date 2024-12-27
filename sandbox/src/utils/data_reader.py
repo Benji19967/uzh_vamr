@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import numpy as np
+from src.image import Dataset, Image
 from src.utils import utils
 
 
@@ -18,14 +19,16 @@ class DataReader:
 
 class KittiDataReader:
     BASE_DIR = Path("data/kitti")
-    IMAGES_DIR = BASE_DIR / "05" / "image_0"
+    IMAGES_DIR = BASE_DIR / "05" / "image_0"  # left image files
 
     def __init__(self) -> None:
         pass
 
     @classmethod
-    def read_image(cls, id: int) -> np.ndarray:
-        return utils.read_img(filepath=cls.IMAGES_DIR / f"{id:06}.png")
+    def read_image(cls, id: int) -> Image:
+        filepath = cls.IMAGES_DIR / f"{id:06}.png"
+        img = utils.read_img(filepath=filepath)
+        return Image(img=img, dataset=Dataset.KITTI, id=id, filepath=filepath)
 
     @classmethod
     def show_image(cls, id: int = 0) -> None:

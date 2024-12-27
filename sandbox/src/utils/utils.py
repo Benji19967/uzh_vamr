@@ -1,4 +1,6 @@
+from functools import wraps
 from pathlib import Path
+from time import time
 
 import cv2
 import numpy as np
@@ -23,3 +25,15 @@ def show_img_cv(img: np.ndarray):
 
     # closing all open windows
     cv2.destroyAllWindows()
+
+
+def timing(f):
+    @wraps(f)
+    def wrap(*args, **kw):
+        ts = time()
+        result = f(*args, **kw)
+        te = time()
+        print("func:%r args:[%r, %r] took: %2.4f sec" % (f.__name__, args, kw, te - ts))
+        return result
+
+    return wrap

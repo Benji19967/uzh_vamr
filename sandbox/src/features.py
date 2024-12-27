@@ -5,9 +5,6 @@ from scipy.spatial.distance import cdist
 from src.image import Image
 from src.utils.utils import timing
 
-# Randomly chosen parameters that seem to work well
-MATCH_LAMBDA = 4
-
 
 class HarrisScores:
     CORNER_PATCH_SIZE = 9
@@ -187,11 +184,9 @@ class Keypoints:
 
 
 class Descriptors:
-    """
-    ((2r+1)^2, num_keypoints)
-    """
 
     DESCRIPTOR_RADIUS = 9
+    MATCH_LAMBDA = 4
 
     def __init__(self, image: Image, keypoints: np.ndarray) -> None:
         self._image = image
@@ -228,6 +223,53 @@ class Descriptors:
 
         return descriptors
 
+    @classmethod
+    def match(
+        cls,
+        query_descriptors: np.ndarray,
+        db_descriptors: np.ndarray,
+        match_lambda: int = MATCH_LAMBDA,
+    ) -> np.ndarray:
+        """
+        For each query_descriptor find the closest db_descriptor.
+        Use each db_descriptor only once.
+
+        Args:
+            query_descriptors (np.ndarray): descriptors at time t2
+            db_descriptors (np.ndarray): descriptors at time t1
+            match_lambda (int):
+
+        Returns:
+            np.ndarray: (1, len(query_descriptors))
+        """
+        # shape: (Q, D) -- in this case (200, 200)
+        # distance from each query descriptor to each database descriptor
+        dists = cdist(query_descriptors.T, db_descriptors.T, "euclidean")
+
+        # shape: (200, 1)
+        # for each query_descriptor, which db_descriptor (index) is closest (argmin)
+        matches = np.argmin(dists, axis=1)
+
+        # shape: (200, 1)
+        # keep only distances that matched in `matches`
+        dists = dists[np.arange(matches.shape[0]), matches]
+
+        # scalar
+        # min distance between any two descriptors across both sets
+        min_non_zero_dist = dists.min()
+
+        # keep only descriptors with small distance
+        # adaptive threshold (because there should be at least one match)
+        matches[dists >= match_lambda * min_non_zero_dist] = -1
+
+        # remove double matches:
+        # if a db_descriptor was assigned to several query_descriptors, keep only 1 match
+        unique_matches = np.ones_like(matches) * -1
+        _, unique_match_idxs = np.unique(matches, return_index=True)
+        unique_matches[unique_match_idxs] = matches[unique_match_idxs]
+
+        return unique_matches
+
     def plot(self) -> None:
         plt.clf()
         plt.close()
@@ -239,6 +281,25 @@ class Descriptors:
             )
             axs[i // 4, i % 4].axis("off")
 
+        plt.show()
+
+    @classmethod
+    def plot_matches(
+        cls,
+        matches: np.ndarray,
+        query_keypoints: np.ndarray,
+        database_keypoints: np.ndarray,
+    ):
+        query_indices = np.nonzero(matches >= 0)[0]
+        match_indices = matches[query_indices]
+
+        x_from = query_keypoints[0, query_indices]
+        x_to = database_keypoints[0, match_indices]
+        y_from = query_keypoints[1, query_indices]
+        y_to = database_keypoints[1, match_indices]
+
+        for i in range(x_from.shape[0]):
+            plt.plot([y_from[i], y_to[i]], [x_from[i], x_to[i]], "g-", linewidth=3)
         plt.show()
 
 

@@ -3,7 +3,6 @@ from tkinter import W
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-
 from describe_keypoints import describeKeypoints
 from match_descriptors import matchDescriptors
 from plot_matches import plotMatches

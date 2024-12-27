@@ -1,23 +1,42 @@
+from abc import ABC, abstractmethod
+from functools import lru_cache
 from pathlib import Path
 
-import numpy as np
 from src.image import Dataset, Image
 from src.utils import utils
 
 
-class DataReader:
+class DataReader(ABC):
+    BASE_DIR = Path("")
+    IMAGES_DIR = BASE_DIR
 
     def __init__(self) -> None:
         pass
 
-    def read_image(self, id: int) -> np.ndarray:
-        pass
+    @classmethod
+    @abstractmethod
+    def _filename_from_id(cls, id: int) -> str:
+        raise NotImplementedError
 
-    def read_all_images(self) -> list[np.ndarray]:
-        pass
+    @classmethod
+    def read_image(cls, id: int = 0) -> Image:
+        filepath = cls.IMAGES_DIR / cls._filename_from_id(id=id)
+        img = utils.read_img(filepath=filepath)
+        return Image(img=img, dataset=Dataset.KITTI, id=id, filepath=filepath)
+
+    @classmethod
+    def show_image(cls, id: int = 0) -> None:
+        image = cls.read_image(id=id)
+        utils.show_img_cv(img=image.img)
+
+    @classmethod
+    def show_images(cls, start_id: int = 0, end_id: int = 5) -> None:
+        for id in range(start_id, end_id):
+            image = cls.read_image(id=id)
+            utils.show_img_cv(img=image.img)
 
 
-class KittiDataReader:
+class KittiDataReader(DataReader):
     BASE_DIR = Path("data/kitti")
     IMAGES_DIR = BASE_DIR / "05" / "image_0"  # left image files
 
@@ -25,24 +44,28 @@ class KittiDataReader:
         pass
 
     @classmethod
-    def read_image(cls, id: int) -> Image:
-        filepath = cls.IMAGES_DIR / f"{id:06}.png"
-        img = utils.read_img(filepath=filepath)
-        return Image(img=img, dataset=Dataset.KITTI, id=id, filepath=filepath)
+    def _filename_from_id(cls, id: int) -> str:
+        return f"{id:06}.png"
+
+
+class MalagaDataReader(DataReader):
+    BASE_DIR = Path("data/malaga-urban-dataset-extract-07")
+    IMAGES_DIR = BASE_DIR / "Images"
 
     @classmethod
-    def show_image(cls, id: int = 0) -> None:
-        img = cls.read_image(id=id)
-        utils.show_img(img=img)
+    def _filename_from_id(cls, id: int) -> str:
+        return cls._filenames()[id]
 
     @classmethod
-    def show_images(cls, start_id: int = 0, end_id: int = 10) -> None:
-        for id in range(start_id, end_id):
-            img = cls.read_image(id=id)
-            utils.show_img(img=img)
+    @lru_cache()
+    def _filenames(cls) -> list[str]:
+        return [
+            f"{full_filename.stem}.jpg"
+            for full_filename in sorted(cls.IMAGES_DIR.glob("*left.jpg"))
+        ]
 
 
-class ParkingDataReader:
+class ParkingDataReader(DataReader):
     BASE_DIR = Path("data/parking")
     IMAGES_DIR = BASE_DIR / "images"
 
@@ -50,16 +73,5 @@ class ParkingDataReader:
         pass
 
     @classmethod
-    def read_image(cls, id: int) -> np.ndarray:
-        return utils.read_img(filepath=cls.IMAGES_DIR / f"img_{id:05}.png")
-
-    @classmethod
-    def show_image(cls, id: int = 0) -> None:
-        img = cls.read_image(id=id)
-        utils.show_img(img=img)
-
-    @classmethod
-    def show_images(cls, start_id: int = 0, end_id: int = 10) -> None:
-        for id in range(start_id, end_id):
-            img = cls.read_image(id=id)
-            utils.show_img(img=img)
+    def _filename_from_id(cls, id: int) -> str:
+        return f"img_{id:05}.png"

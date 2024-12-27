@@ -8,6 +8,7 @@ class Dataset(Enum):
     KITTI = 1
     MALAGA = 2
     PARKING = 3
+    OTHER = 4
 
 
 class Image:
@@ -39,4 +40,4 @@ class Image:
         return str(self._filepath)
 
     def __str__(self) -> str:
-        return f"{self.dataset}_{self._id}"
+        return f"{self.dataset}/{self.filepath}"

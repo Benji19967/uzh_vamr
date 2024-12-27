@@ -1,5 +1,3 @@
-from functools import lru_cache
-
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import signal
@@ -8,7 +6,6 @@ from src.image import Image
 from src.utils.utils import timing
 
 # Randomly chosen parameters that seem to work well
-DESCRIPTOR_RADIUS = 9
 MATCH_LAMBDA = 4
 
 
@@ -18,14 +15,20 @@ class HarrisScores:
 
     def __init__(self, image: Image) -> None:
         self._image = image
+        self._scores: np.ndarray | None = None
 
     @property
     def img(self) -> np.ndarray:
         return self._image.img
 
-    @lru_cache
+    @property
+    def scores(self) -> np.ndarray:
+        if self._scores is None:
+            self._scores = self.compute_scores()
+        return self._scores
+
     @timing
-    def scores(
+    def compute_scores(
         self,
         patch_size: int = CORNER_PATCH_SIZE,
         kappa: float = HARRIS_KAPPA,
@@ -60,7 +63,7 @@ class HarrisScores:
         fig, axs = plt.subplots(1, 1, squeeze=False)
         axs[0, 0].imshow(self.img, cmap="gray")
         axs[0, 0].axis("off")
-        axs[0, 0].imshow(self.scores())
+        axs[0, 0].imshow(self.scores)
         axs[0, 0].set_title("Harris Scores")
         axs[0, 0].axis("off")
 
@@ -130,15 +133,14 @@ class Keypoints:
     def img(self) -> np.ndarray:
         return self._image.img
 
+    @property
     def keypoints(self) -> np.ndarray:
         if self._keypoints is None:
-            self._keypoints = self.select(scores=self._scores)
+            self._keypoints = self.select()
         return self._keypoints
 
-    @classmethod
     def select(
-        cls,
-        scores: np.ndarray,
+        self,
         num_keypoints: int = NUM_KEYPOINTS,
         nonmax_suppression_radius: int = NONMAXIMUM_SUPRESSION_RADIUS,
     ) -> np.ndarray:
@@ -159,7 +161,7 @@ class Keypoints:
 
         # scores with padding
         temp_scores = np.pad(
-            scores, [(r, r), (r, r)], mode="constant", constant_values=0
+            self._scores, [(r, r), (r, r)], mode="constant", constant_values=0
         )
 
         for i in range(num_keypoints):
@@ -179,7 +181,7 @@ class Keypoints:
         plt.clf()
         plt.close()
         plt.imshow(self.img, cmap="gray")
-        plt.plot(self.keypoints()[1, :], self.keypoints()[0, :], "rx", linewidth=2)
+        plt.plot(self.keypoints[1, :], self.keypoints[0, :], "rx", linewidth=2)
         plt.axis("off")
         plt.show()
 
@@ -188,6 +190,56 @@ class Descriptors:
     """
     ((2r+1)^2, num_keypoints)
     """
+
+    DESCRIPTOR_RADIUS = 9
+
+    def __init__(self, image: Image, keypoints: np.ndarray) -> None:
+        self._image = image
+        self._keypoints = keypoints
+        self._descriptors: np.ndarray | None = None
+
+    @property
+    def img(self) -> np.ndarray:
+        return self._image.img
+
+    @property
+    def descriptors(self) -> np.ndarray:
+        if self._descriptors is None:
+            self._descriptors = self.describe_keypoints()
+        return self._descriptors
+
+    def describe_keypoints(
+        self, descriptor_radius: int = DESCRIPTOR_RADIUS
+    ) -> np.ndarray:
+        r = descriptor_radius
+        N = self._keypoints.shape[1]
+
+        # `(2 * r + 1) ** 2` is the number of pixels in a patch/descriptor
+        descriptors = np.zeros([(2 * r + 1) ** 2, N])
+        padded = np.pad(self.img, [(r, r), (r, r)], mode="constant", constant_values=0)
+
+        for i in range(N):
+            kp = self._keypoints[:, i].astype(int) + r  # `+r` to account for padding
+
+            # store the the pixel intensities of the descriptors in a flattened way
+            descriptors[:, i] = padded[
+                (kp[0] - r) : (kp[0] + r + 1), (kp[1] - r) : (kp[1] + r + 1)
+            ].flatten()
+
+        return descriptors
+
+    def plot(self) -> None:
+        plt.clf()
+        plt.close()
+        fig, axs = plt.subplots(4, 4)
+        patch_size = 2 * self.DESCRIPTOR_RADIUS + 1
+        for i in range(16):
+            axs[i // 4, i % 4].imshow(
+                self.descriptors[:, i].reshape([patch_size, patch_size])
+            )
+            axs[i // 4, i % 4].axis("off")
+
+        plt.show()
 
 
 class HarrisDetector:

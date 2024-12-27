@@ -1,5 +1,5 @@
 import cv2
-from src.features import HarrisDetector, HarrisScores, Keypoints
+from src.features import Descriptors, HarrisDetector, HarrisScores, Keypoints
 from src.image import Image
 from src.utils import utils
 from src.utils.data_reader import KittiDataReader
@@ -11,8 +11,11 @@ def main():
     hs = HarrisScores(image=image)
     hs.plot()
 
-    kp = Keypoints(image=image, scores=hs.scores())
+    kp = Keypoints(image=image, scores=hs.scores)
     kp.plot()
+
+    desc = Descriptors(image=image, keypoints=kp.keypoints)
+    desc.plot()
 
     # scores_cv = cv2.cornerHarris(img, blockSize=9, ksize=3, k=0.08)
     # utils.show_img(scores_cv)

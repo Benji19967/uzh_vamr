@@ -18,7 +18,11 @@ Option 2) mxn:
 
 Which one is better?
 
-Option 2 has its advantages: applying transformation to points
+Option 2 has its advantages:
+- This is the notation used in class / in the slides (v'=Tv rather than v'=vT), where T
+is a transformation matrix and v a vector representing a point. v'=vT would work as well
+if v was a row vector and T the transpose of T in v'=Tv. But this notations is almost
+never used in linear algebra.
 
 Opinions on the web:
 https://www.chrishecker.com/Column_vs_Row_Vectors#:~:text=When%20you're%20doing%20math,a%20single%20simple%20example...
@@ -29,6 +33,8 @@ https://steve.hollasch.net/cgindex/math/matrix/column-vec.html
 
 https://toqoz.fyi/matrix-math-confusion.html
 - "Post-multiply (column vectors) is the most dominant by far, especially in mathematical texts and really everything other than computer graphics.  It represents the vector as a single column matrix on the right side"
+
+Verdict: use option 2, i.e. column vector representation.
 """
 
 import numpy as np

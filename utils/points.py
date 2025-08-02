@@ -19,6 +19,16 @@ Option 2) mxn:
 Which one is better?
 
 Option 2 has its advantages: applying transformation to points
+
+Opinions on the web:
+https://www.chrishecker.com/Column_vs_Row_Vectors#:~:text=When%20you're%20doing%20math,a%20single%20simple%20example...
+- "When you're doing math for graphics, physics, games, or whatever, you should use column vectors when you're representing points, differences between points, and the like"
+
+https://steve.hollasch.net/cgindex/math/matrix/column-vec.html
+- "Recent mathematical treatments of linear algebra and related fields invariably treat vectors as columns"
+
+https://toqoz.fyi/matrix-math-confusion.html
+- "Post-multiply (column vectors) is the most dominant by far, especially in mathematical texts and really everything other than computer graphics.  It represents the vector as a single column matrix on the right side"
 """
 
 import numpy as np

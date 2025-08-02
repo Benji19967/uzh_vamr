@@ -1,19 +1,19 @@
 import cv2
 import numpy as np
 
-import utils
 
-
-def computeDifferenceOfGaussians(blurred_images) -> list[list[np.ndarray]]:
+def computeDifferenceOfGaussians(blurred_images):
     # The number of octaves can be inferred from the length of blurred_images
-    stack_of_DoGs_per_octave = []
-    for images_in_octave in blurred_images:
-        differences_of_gaussians_for_octave = []
-        for img_at_sigma_1, img_at_sigma_2 in zip(
-            images_in_octave[:-1], images_in_octave[1:]
-        ):
-            DoG = img_at_sigma_2 - img_at_sigma_1
-            # utils.show_np_array_as_img(DoG)
-            differences_of_gaussians_for_octave.append(DoG)
-        stack_of_DoGs_per_octave.append(differences_of_gaussians_for_octave)
-    return stack_of_DoGs_per_octave
+    pass
+    num_octaves = len(blurred_images)
+    dogs = []
+
+    for i, img in enumerate(blurred_images):
+        dog = np.zeros(img.shape - np.array([0, 0, 1]))
+        num_dogs_per_octave = dog.shape[2]
+        for dog_idx in range(num_dogs_per_octave):
+            dog[:, :, dog_idx] = np.abs(img[:, :, dog_idx + 1] - img[:, :, dog_idx])
+
+        dogs.append(dog)
+
+    return dogs

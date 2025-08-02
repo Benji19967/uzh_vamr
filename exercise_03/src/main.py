@@ -3,6 +3,7 @@ from tkinter import W
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+
 from describe_keypoints import describeKeypoints
 from match_descriptors import matchDescriptors
 from plot_matches import plotMatches
@@ -139,6 +140,7 @@ def part5():
 
 
 def main():
+    # img = read_img("../data/iPhone7/IMG_5713_small.JPG")
     img = read_img("data/000000.png")
     img_2 = read_img("data/000001.png")
     _, harris_scores = part1(img=img)

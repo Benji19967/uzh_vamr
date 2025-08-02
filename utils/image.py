@@ -47,6 +47,9 @@ class Image:
         """
         return self.img.shape
 
+    def save(self, filepath: str) -> None:
+        cv2.imwrite(filepath, self.img)
+
     def resize(self, width: int, height: int) -> np.ndarray:
         return cv2.resize(self.img, (width, height))
 

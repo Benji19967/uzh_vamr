@@ -2,6 +2,7 @@ import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 from world_to_pixel import world_to_pixel
 
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ def generate_3D_corner_positions() -> np.ndarray:
 
     Returns:
         M: matrix of corners of the checkerboard as 3D points (X, Y, Z) expressed
-        in the world coordinate system (Nx3).
+        in the world coordinate system (Nx4).
     """
     nx, ny = (NUM_POINTS_BOARD_X, NUM_POINTS_BOARD_Y)
     x_arr = np.linspace(0, (nx - 1) * EDGE_LENGTH_BOARD_METERS, nx)

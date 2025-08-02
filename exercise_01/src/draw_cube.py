@@ -2,6 +2,7 @@ import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 from world_to_pixel import world_to_pixel
 
 logger = logging.getLogger(__name__)
@@ -15,6 +16,8 @@ def generate_3D_cube_vertices(
 ) -> np.ndarray:
     """
     Generate 8 vertices of a cube in homogenous coordinates (X, Y, Z, 1).
+
+    returns: (Nx4)
     """
     edge_length_board = 0.04  # (meters)
     edge_length_cube_meters = edge_length_board * num_squares_per_edge_of_cube

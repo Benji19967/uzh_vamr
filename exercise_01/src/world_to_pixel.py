@@ -1,4 +1,5 @@
 import numpy as np
+
 from pose_vector_to_transformation_matrix import pose_vector_to_transformation_matrix
 from project_points import project_points
 
@@ -13,7 +14,7 @@ def world_to_pixel(
     Perspective Projection from World to Pixel coordinates.
 
     Args:
-        p_W_hom: 3d points in World frame and as homogeneous coordinates (4xN)
+        p_W_hom: 3d points in World frame and as homogeneous coordinates (Nx4)
         pose_vec: 6x1 vector representing the pose as [wx, wy, wz, tx, ty, tz]
         K: camera matrix (3x3)
         D: distortion coefficients (4x1)

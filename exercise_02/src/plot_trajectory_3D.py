@@ -2,11 +2,12 @@ import cv2
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
-from draw_camera import drawCamera
 
 # Use Agg backend for canvas
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from scipy.spatial.transform import Rotation
+
+from draw_camera import drawCamera
 
 
 def plotTrajectory3D(fps, filename, translations, quaternions, pts3d):
@@ -22,6 +23,8 @@ def plotTrajectory3D(fps, filename, translations, quaternions, pts3d):
     # that maps points from the camera coordinate frame to the world
     # frame, i.e. the transformation that expresses the camera position
     # in the world frame.
+
+    # TODO: this could also be changed to accept (3xN) rather than (Nx3)
 
     xmin = min(np.min(translations[:, 0]), np.min(pts3d[:, 0]))
     xmax = max(np.max(translations[:, 0]), np.max(pts3d[:, 0]))

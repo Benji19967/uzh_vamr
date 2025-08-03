@@ -5,6 +5,9 @@ def selectKeypoints(scores, num, r):
     """
     Selects the num best scores as keypoints and performs non-maximum supression of a (2r + 1)*(2r + 1) box around
     the current maximum.
+
+    Returns:
+        (2xN) keypoints
     """
 
     # keep `num` keypoints, each has 2 coordinates (u, v)

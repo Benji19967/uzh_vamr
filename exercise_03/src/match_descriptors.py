@@ -13,11 +13,11 @@ def matchDescriptors(query_descriptors, database_descriptors, match_lambda):
     # distance from each query descriptor to each database descriptor
     dists = cdist(query_descriptors.T, database_descriptors.T, "euclidean")
 
-    # shape: (200, 1)
+    # shape: (200,)
     # for each query_descriptor, which db_descriptor (index) is closest (argmin)
     matches = np.argmin(dists, axis=1)
 
-    # shape: (200, 1)
+    # shape: (200,)
     # keep only distances that matched in `matches`
     dists = dists[np.arange(matches.shape[0]), matches]
 

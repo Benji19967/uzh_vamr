@@ -1,5 +1,8 @@
+import sys
+
 import cv2
 import numpy as np
+
 from code_previous_exercises.estimate_pose_dlt import estimatePoseDLT
 from code_previous_exercises.projectPoints import projectPoints
 
@@ -18,7 +21,7 @@ def ransacLocalization(
     False if the match is an outlier, True otherwise.
 
     :param matched_query_keypoints: (2, N)
-    :param corresponding_landmarks: (N, 3)
+    :param corresponding_landmarks: (3, N)
     :param K: camera matrix intrinsics
 
     where N is the number of keypoints
@@ -41,29 +44,29 @@ def ransacLocalization(
     num_iteration_history = []
     max_num_inliers = 0
 
-    projected_points = projectPoints(corresponding_landmarks, K)
+    # (2xN)
+    projected_points = projectPoints(corresponding_landmarks.T, K).T
 
     # RANSAC
     for _ in range(NUM_ITERATIONS):
-
         # Model from k samples (DLT or P3P)
         indices = np.random.choice(
             np.arange(num_matched_keypoints), size=NUM_SAMPLES, replace=False
         )
-        landmark_sample = corresponding_landmarks[indices, :]
+        landmark_sample = corresponding_landmarks[:, indices]
         keypoint_sample = matched_query_keypoints[:, indices]
 
-        M_C_W_guess = estimatePoseDLT(keypoint_sample.T, landmark_sample, K)
+        M_C_W_guess = estimatePoseDLT(keypoint_sample.T, landmark_sample.T, K)
         R_C_W_guess = M_C_W_guess[:, :3]
         t_C_W_guess = M_C_W_guess[:, -1]
 
         # Count inliers
         C_landmarks = (
-            np.matmul(R_C_W_guess, corresponding_landmarks[:, :, None]).squeeze(-1)
+            np.matmul(R_C_W_guess, corresponding_landmarks.T[:, :, None]).squeeze(-1)
             + t_C_W_guess[None, :]
         )
-        projected_points = projectPoints(C_landmarks, K)
-        difference = matched_query_keypoints - projected_points.T
+        projected_points = projectPoints(C_landmarks, K).T
+        difference = matched_query_keypoints - projected_points
         errors = (difference**2).sum(0)
         is_inlier = errors < PIXEL_TOLERANCE**2
 
@@ -82,7 +85,7 @@ def ransacLocalization(
     else:
         M_C_W = estimatePoseDLT(
             matched_query_keypoints[:, best_inlier_mask].T,
-            corresponding_landmarks[best_inlier_mask, :],
+            corresponding_landmarks[:, best_inlier_mask].T,
             K,
         )
         R_C_W = M_C_W[:, :3]

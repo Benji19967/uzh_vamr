@@ -1,13 +1,14 @@
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.lines import Line2D
+
 from code_previous_exercises.describeKeypoints import describeKeypoints
 from code_previous_exercises.draw_camera import drawCamera
 from code_previous_exercises.harris import harris
 from code_previous_exercises.matchDescriptors import matchDescriptors
 from code_previous_exercises.plotMatches import plotMatches
 from code_previous_exercises.selectKeypoints import selectKeypoints
-from matplotlib.lines import Line2D
 from parabolaRansac import parabolaRansac
 from ransacLocalization import ransacLocalization
 
@@ -41,9 +42,10 @@ data = np.concatenate(
 )
 
 # Data for parts 3 and 4
+# (3xN)
+p_W_landmarks = np.loadtxt("data/p_W_landmarks.txt").T
 K = np.loadtxt("data/K.txt")
 keypoints = np.loadtxt("data/keypoints.txt").T
-p_W_landmarks = np.loadtxt("data/p_W_landmarks.txt")
 
 # Data for part 4
 database_image = cv2.imread("data/000000.png", cv2.IMREAD_GRAYSCALE)
@@ -127,7 +129,8 @@ all_matches = matchDescriptors(query_descriptors, database_descriptors, match_la
 # Drop unmatched keypoints and get 3d landmarks for the matched ones.
 matched_query_keypoints = query_keypoints[:, all_matches >= 0]
 corresponding_matches = all_matches[all_matches >= 0]
-corresponding_landmarks = p_W_landmarks[corresponding_matches, :]
+# (3xN)
+corresponding_landmarks = p_W_landmarks[:, corresponding_matches]
 
 # perform RANSAC to find best Pose and inliers
 out = ransacLocalization(matched_query_keypoints, corresponding_landmarks, K)
@@ -215,7 +218,8 @@ for i in range(9):
     # Drop unmatched keypoints and get 3d landmarks for the matched ones.
     matched_query_keypoints = query_keypoints[:, all_matches >= 0]
     corresponding_matches = all_matches[all_matches >= 0]
-    corresponding_landmarks = p_W_landmarks[corresponding_matches, :]
+    # (3xN)
+    corresponding_landmarks = p_W_landmarks[:, corresponding_matches]
 
     # perform RANSAC to find best Pose and inliers
     out = ransacLocalization(matched_query_keypoints, corresponding_landmarks, K)
@@ -255,7 +259,7 @@ for i in range(9):
     ax.set_xlim3d(-15, 10)
     ax.set_ylim3d(-10, 5)
     ax.set_zlim3d(-1, 40)
-    ax.scatter(p_W_landmarks[:, 0], p_W_landmarks[:, 1], p_W_landmarks[:, 2], s=0.5)
+    ax.scatter(p_W_landmarks[0, :], p_W_landmarks[1, :], p_W_landmarks[2, :], s=0.5)
     if R_C_W is not None:
         drawCamera(
             ax,

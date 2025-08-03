@@ -28,12 +28,14 @@ def generate_3D_corner_positions() -> np.ndarray:
         in the world coordinate system as homogeneous coordinates (4xN).
     """
     nx, ny = (NUM_POINTS_BOARD_X, NUM_POINTS_BOARD_Y)
+    num_points = nx * ny
     x_arr = np.linspace(0, (nx - 1) * EDGE_LENGTH_BOARD_METERS, nx)
     y_arr = np.linspace(0, (ny - 1) * EDGE_LENGTH_BOARD_METERS, ny)
-    p_W_corners_hom = np.array([[x, y, 0, 1] for x in x_arr for y in y_arr])
+    p = np.array(np.meshgrid(x_arr, y_arr)).reshape(2, -1)
+    p_W_corners_hom = np.r_[p, np.zeros((1, num_points)), np.ones((1, num_points))]
     logger.debug(f"{p_W_corners_hom=}")
 
-    return np.transpose(p_W_corners_hom)
+    return p_W_corners_hom
 
 
 def project_and_superimpose_corners_onto_img(

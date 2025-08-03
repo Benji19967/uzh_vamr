@@ -17,7 +17,7 @@ def generate_3D_cube_vertices(
     """
     Generate 8 vertices of a cube in homogenous coordinates (X, Y, Z, 1).
 
-    returns: (Nx4)
+    returns: (4xN)
     """
     edge_length_board = 0.04  # (meters)
     edge_length_cube_meters = edge_length_board * num_squares_per_edge_of_cube
@@ -37,8 +37,9 @@ def generate_3D_cube_vertices(
                     ]
                 )
 
-    cube_vertices = np.array(vertices)
+    cube_vertices = np.transpose(np.array(vertices))
     logger.debug(f"{cube_vertices=}")
+    print(cube_vertices)
 
     return cube_vertices
 

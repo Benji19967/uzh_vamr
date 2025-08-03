@@ -25,7 +25,7 @@ def generate_3D_corner_positions() -> np.ndarray:
 
     Returns:
         M: matrix of corners of the checkerboard as 3D points (X, Y, Z) expressed
-        in the world coordinate system (Nx4).
+        in the world coordinate system as homogeneous coordinates (4xN).
     """
     nx, ny = (NUM_POINTS_BOARD_X, NUM_POINTS_BOARD_Y)
     x_arr = np.linspace(0, (nx - 1) * EDGE_LENGTH_BOARD_METERS, nx)
@@ -33,7 +33,7 @@ def generate_3D_corner_positions() -> np.ndarray:
     p_W_corners_hom = np.array([[x, y, 0, 1] for x in x_arr for y in y_arr])
     logger.debug(f"{p_W_corners_hom=}")
 
-    return p_W_corners_hom
+    return np.transpose(p_W_corners_hom)
 
 
 def project_and_superimpose_corners_onto_img(

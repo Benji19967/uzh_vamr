@@ -1,9 +1,7 @@
 import logging
 import time
 
-import cv2
 import matplotlib.pyplot as plt
-import numpy as np
 
 import utils
 from corners_onto_undistorted_img import project_and_superimpose_corners_onto_img

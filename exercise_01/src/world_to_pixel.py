@@ -14,7 +14,7 @@ def world_to_pixel(
     Perspective Projection from World to Pixel coordinates.
 
     Args:
-        p_W_hom: 3d points in World frame and as homogeneous coordinates (Nx4)
+        p_W_hom: 3d points in World frame and as homogeneous coordinates (4xN)
         pose_vec: 6x1 vector representing the pose as [wx, wy, wz, tx, ty, tz]
         K: camera matrix (3x3)
         D: distortion coefficients (4x1)
@@ -28,7 +28,7 @@ def world_to_pixel(
     T_C_W = pose_vector_to_transformation_matrix(pose_vec)
 
     # transform 3d points from world to current camera pose
-    p_C_corners = np.matmul(T_C_W[:3, :], np.transpose(p_W_hom))
+    p_C_corners = np.matmul(T_C_W[:3, :], p_W_hom)
     projected_points = project_points(points_3d=p_C_corners, K=K, D=D)
 
     return projected_points

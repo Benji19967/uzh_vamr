@@ -1,7 +1,8 @@
 import numpy as np
-
-from pose_vector_to_transformation_matrix import pose_vector_to_transformation_matrix
 from project_points import project_points
+from transformation_matrix_from_pose_vector import (
+    transformation_matrix_from_pose_vector,
+)
 
 
 def world_to_pixel(
@@ -22,13 +23,12 @@ def world_to_pixel(
     Returns:
         projected_points: 2d points (2xN)
     """
-    # project the corners on the image
     # compute the 4x4 homogeneous transformation matrix that maps points
     # from the world to the camera coordinate frame
-    T_C_W = pose_vector_to_transformation_matrix(pose_vec)
+    T_C_W = transformation_matrix_from_pose_vector(pose_vec)
 
     # transform 3d points from world to current camera pose
     p_C_corners = np.matmul(T_C_W[:3, :], p_W_hom)
-    projected_points = project_points(points_3d=p_C_corners, K=K, D=D)
+    projected_points = project_points(p_C=p_C_corners, K=K, D=D)
 
     return projected_points

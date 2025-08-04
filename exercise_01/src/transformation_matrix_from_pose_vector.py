@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def pose_vector_to_transformation_matrix(
+def transformation_matrix_from_pose_vector(
     pose_vec: np.ndarray, use_opencv: bool = False
 ) -> np.ndarray:
     """

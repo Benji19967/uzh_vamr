@@ -1,3 +1,11 @@
+import numpy as np
+
+
+class Points:
+    def __init__(self, p: np.ndarray) -> None:
+        self.p = p
+
+
 """
 There are two (common) ways to represent n points in an m-dimensional using matrices.
 
@@ -36,10 +44,3 @@ https://toqoz.fyi/matrix-math-confusion.html
 
 Verdict: use option 2, i.e. column vector representation.
 """
-
-import numpy as np
-
-
-class Points:
-    def __init__(self, p: np.ndarray) -> None:
-        self.p = p

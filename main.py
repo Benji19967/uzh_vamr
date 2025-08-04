@@ -1,6 +1,9 @@
 from glob import glob
 
-from utils.image import Image
+import cv2
+import cv2 as cv
+
+from utils.image import Image, show_img
 
 
 def main():
@@ -22,7 +25,18 @@ def main():
     #     print(new_path)
     #     image.save(filepath=new_path)
 
-    pass
+    # SIFT
+    img = cv.imread("./data/iPhone7/IMG_5913_small.JPG")
+    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+
+    sift = cv.SIFT_create()
+    kp = sift.detect(gray, None)
+
+    img = cv.drawKeypoints(
+        gray, kp, img, flags=cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS
+    )
+
+    show_img(img)
 
 
 if __name__ == "__main__":

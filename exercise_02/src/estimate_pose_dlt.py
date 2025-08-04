@@ -1,38 +1,38 @@
 import numpy as np
 
 
-def _build_measurement_matrix_Q(p_norm: np.ndarray, P: np.ndarray) -> np.ndarray:
+def _build_measurement_matrix_Q(p_N: np.ndarray, p_W: np.ndarray) -> np.ndarray:
     """
-    p  [3 x n] array containing the normalized coordinates of the 2D points
-    P  [3 x n] array containing the 3D point positions
+    p_N  [2 x n] array containing the normalized coordinates of the 2D points
+    p_W  [3 x n] array containing the 3D point positions
     """
-    num_corners = p_norm.shape[1]
+    num_corners = p_N.shape[1]
     Q = np.zeros((2 * num_corners, 12))
 
     for i in range(num_corners):
-        u = p_norm[0, i]
-        v = p_norm[1, i]
+        u = p_N[0, i]
+        v = p_N[1, i]
 
-        Q[2 * i, 0:3] = P[:, i]
+        Q[2 * i, 0:3] = p_W[:, i]
         Q[2 * i, 3] = 1
-        Q[2 * i, 8:11] = -u * P[:, i]
+        Q[2 * i, 8:11] = -u * p_W[:, i]
         Q[2 * i, 11] = -u
 
-        Q[2 * i + 1, 4:7] = P[:, i]
+        Q[2 * i + 1, 4:7] = p_W[:, i]
         Q[2 * i + 1, 7] = 1
-        Q[2 * i + 1, 8:11] = -v * P[:, i]
+        Q[2 * i + 1, 8:11] = -v * p_W[:, i]
         Q[2 * i + 1, 11] = -v
 
     return Q
 
 
-def estimatePoseDLT(p, P, K):
+def estimatePoseDLT(p_P, p_W, K):
     """
     Estimates the pose of a camera using a set of 2D-3D correspondences
     and a given camera matrix.
 
-    p  [2 x n] array containing the undistorted coordinates of the 2D points
-    P  [3 x n] array containing the 3D point positions
+    p_P  [2 x n] array containing the undistorted coordinates of the 2D points
+    p_W  [3 x n] array containing the 3D point positions
     K  [3 x 3] camera matrix
 
     Returns a [3 x 4] projection matrix of the form
@@ -40,11 +40,12 @@ def estimatePoseDLT(p, P, K):
     where R is a rotation matrix. M_tilde encodes the transformation
     that maps points from the world frame to the camera frame
     """
-    num_points = p.shape[1]
+    num_points = p_P.shape[1]
 
-    # Convert 2D to normalized coordinates
-    p_homogeneous = np.r_[p, np.ones((1, num_points))]
-    p_normalized = np.linalg.inv(K) @ p_homogeneous
+    # Convert 2D to normalized coordinates (focal length=1 , origin at center of image)
+    p_P_hom = np.r_[p_P, np.ones((1, num_points))]
+    p_N_hom = np.linalg.inv(K) @ p_P_hom
+    p_N = p_N_hom[:2, :]
 
     # Build measurement matrix Q
     # P_homogeneous = np.r_[P.T, np.ones(num_points)].T
@@ -52,7 +53,7 @@ def estimatePoseDLT(p, P, K):
     # q2 = np.kron(P_homogeneous, [[0], [1]])
     # q3 = np.kron(P_homogeneous, p)
 
-    Q = _build_measurement_matrix_Q(p_norm=p_normalized, P=P)
+    Q = _build_measurement_matrix_Q(p_N=p_N, p_W=p_W)
 
     # Solve for Q.M_tilde = 0 subject to the constraint ||M_tilde||=1
     u, s, vh = np.linalg.svd(Q)

@@ -4,12 +4,11 @@ import time
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.spatial.transform import Rotation
-
 from draw_camera import drawCamera
 from estimate_pose_dlt import estimatePoseDLT
 from plot_trajectory_3D import plotTrajectory3D
 from reproject_points import reprojectPoints
+from scipy.spatial.transform import Rotation
 
 
 def main():
@@ -28,20 +27,22 @@ def main():
     # Load the 2D projected points that have been detected on the
     # undistorted image into an array
     # (2xN)
-    pts_2d = np.loadtxt("data/detected_corners.txt")[image_idx - 1, :].reshape(-1, 2).T
+    p_P_corners = (
+        np.loadtxt("data/detected_corners.txt")[image_idx - 1, :].reshape(-1, 2).T
+    )
 
     # Now that we have the 2D <-> 3D correspondances let's find the camera pose
     # with respect to the world using the DLT algorithm
-    M_tilde = estimatePoseDLT(p=pts_2d, P=p_W_corners, K=K)
+    M_tilde = estimatePoseDLT(p_P=p_P_corners, p_W=p_W_corners, K=K)
 
     # Plot the original 2D points and the reprojected points on the image
     # (2xN)
-    p_reproj = reprojectPoints(P=p_W_corners, M_tilde=M_tilde, K=K)
+    p_P_corners_reproj = reprojectPoints(p_W=p_W_corners, M_tilde=M_tilde, K=K)
 
     plt.figure()
     plt.imshow(undist_img, cmap="gray")
-    plt.scatter(pts_2d[0, :], pts_2d[1, :], marker="o")
-    plt.scatter(p_reproj[0, :], p_reproj[1, :], marker="+")
+    plt.scatter(p_P_corners[0, :], p_P_corners[1, :], marker="o")
+    plt.scatter(p_P_corners_reproj[0, :], p_P_corners_reproj[1, :], marker="+")
     plt.show()
 
     # Make a 3D plot containing the corner positions and a visualization
@@ -73,8 +74,8 @@ def main_video():
 
     for idx in range(num_images):
         # (2xN)
-        pts_2d = np.reshape(all_pts_2d[idx, :], (-1, 2)).T
-        M_tilde_dst = estimatePoseDLT(pts_2d, p_W_corners, K)
+        p_P_corners = np.reshape(all_pts_2d[idx, :], (-1, 2)).T
+        M_tilde_dst = estimatePoseDLT(p_P=p_P_corners, p_W=p_W_corners, K=K)
 
         R_C_W = M_tilde_dst[:3, :3]
         t_C_W = M_tilde_dst[:3, 3]

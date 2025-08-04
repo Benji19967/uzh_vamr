@@ -1,4 +1,5 @@
 import logging
+import time
 
 import cv2
 import numpy as np
@@ -7,7 +8,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def load_poses_vec(filename: str) -> np.ndarray:
+def load_poses(filename: str) -> np.ndarray:
     """
     Load camera poses.
     Dimensions: [736, 6]
@@ -57,3 +58,20 @@ def load_img(filename: str):
     system are inverted to (y, x).
     """
     return cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+
+
+class Timer:
+    def __init__(self, label: str = "Elapsed time"):
+        self.label = label
+        self.start_time = None
+
+    def __enter__(self):
+        self.start_time = time.perf_counter()
+        return (
+            self  # Optional, useful if you want to access timer info inside the context
+        )
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        end_time = time.perf_counter()
+        elapsed = end_time - self.start_time
+        print(f"{self.label}: {elapsed:.4f} seconds")

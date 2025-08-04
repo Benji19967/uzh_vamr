@@ -19,7 +19,7 @@ def transformation_matrix_from_pose_vector(
         pose_vec: 6x1 vector representing the pose as [wx, wy, wz, tx, ty, tz]
 
     Returns:
-        T: 4x4 transformation matrix
+        T_C_W: 4x4 transformation matrix
     """
     w = pose_vec[:3]
     t = pose_vec[3:]
@@ -41,9 +41,9 @@ def transformation_matrix_from_pose_vector(
 
         R = I + np.sin(theta) * K + (1 - np.cos(theta)) * (K @ K)
 
-    T = np.c_[R, t]
-    T = np.r_[T, [[0, 0, 0, 1]]]
+    T_C_W = np.c_[R, t]
+    T_C_W = np.r_[T_C_W, [[0, 0, 0, 1]]]
 
-    logger.debug(f"{T=}")
+    logger.debug(f"{T_C_W=}")
 
-    return T
+    return T_C_W

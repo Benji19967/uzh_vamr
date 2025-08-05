@@ -13,8 +13,30 @@ hidden_state = np.genfromtxt("./data/hidden_state.txt")
 observations = np.genfromtxt("./data/observations.txt")
 num_frames = 150
 K = np.genfromtxt("./data/K.txt")
-poses = np.genfromtxt("./data/poses.txt")
-# 'pp' stands for p prime
+
+
+def load_poses() -> np.ndarray:
+    """
+    Each row of poses contains
+
+    r11 r12 r13 tx r21 r22 r23 ty r31 r32 r33 tz
+
+    where the values are used to build a 4x4 homogeneous pose matrix.
+
+    r11 r12 r13 tx
+    r21 r22 r23 ty
+    r31 r32 r33 tz
+    0   0   0   1
+    """
+    poses = np.genfromtxt("./data/poses.txt")
+    return poses
+
+
+# (Nx12)
+poses = load_poses()
+
+# (3xN): tx, ty, tz
+# pp stands for p prime: p'
 pp_G_C = poses[:, [3, 7, 11]].T
 
 hidden_state, observations, pp_G_C = cropProblem(

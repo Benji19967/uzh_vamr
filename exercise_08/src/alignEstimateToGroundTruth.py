@@ -11,4 +11,31 @@ def alignEstimateToGroundTruth(pp_G_C, p_V_C):
     the aligned trajectory points p_G_C and the points of the ground truth trajectory pp_G_C.
     All matrices are 3xN
     """
-    # TODO: Your code here
+    # Initial guess is identity.
+    twist_guess = HomogMatrix2twist(np.eye(4))
+    scale_guess = 1
+
+    def alignError(x):
+        T_G_V = twist2HomogMatrix(x[:6])
+        scale_G_V = x[6]
+        p_G_C = (
+            np.matmul(scale_G_V * T_G_V[None, :3, :3], p_V_C.T[:, :, None]).squeeze(-1)
+            + T_G_V[None, :3, 3]
+        )
+        errors = pp_G_C.T - p_G_C
+
+        return errors.flatten()
+
+    x0 = np.concatenate([twist_guess, np.array([scale_guess])])
+    res_1 = least_squares(alignError, x0)
+    x_optim = res_1.x
+
+    T_G_V = twist2HomogMatrix(x_optim[:6])
+    scale_G_V = x_optim[6]
+
+    p_G_C = (
+        np.matmul(scale_G_V * T_G_V[None, :3, :3], p_V_C.T[:, :, None]).squeeze(-1)
+        + T_G_V[None, :3, 3]
+    )
+
+    return p_G_C.T

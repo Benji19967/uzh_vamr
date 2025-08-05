@@ -1,5 +1,5 @@
-from scipy.linalg import expm, logm
 import numpy as np
+from scipy.linalg import expm, logm
 
 
 def twist2HomogMatrix(twist):
@@ -9,7 +9,7 @@ def twist2HomogMatrix(twist):
     Output: -H(4,4): Euclidean transformation matrix (rigid body motion)
     """
     v = twist[:3]  # linear part
-    w = twist[3:]   # angular part
+    w = twist[3:]  # angular part
 
     se_matrix = np.concatenate([cross2Matrix(w), v[:, None]], axis=1)
     se_matrix = np.concatenate([se_matrix, np.zeros([1, 4])], axis=0)
@@ -45,19 +45,17 @@ def HomogMatrix2twist(H):
 
 
 def cross2Matrix(x):
-    """ Antisymmetric matrix corresponding to a 3-vector
-     Computes the antisymmetric matrix M corresponding to a 3-vector x such
-     that M*y = cross(x,y) for all 3-vectors y.
+    """Antisymmetric matrix corresponding to a 3-vector
+    Computes the antisymmetric matrix M corresponding to a 3-vector x such
+    that M*y = cross(x,y) for all 3-vectors y.
 
-     Input: 
-       - x np.ndarray(3,1) : vector
+    Input:
+      - x np.ndarray(3,1) : vector
 
-     Output: 
-       - M np.ndarray(3,3) : antisymmetric matrix
+    Output:
+      - M np.ndarray(3,3) : antisymmetric matrix
     """
-    M = np.array([[0,   -x[2], x[1]], 
-                  [x[2],  0,  -x[0]],
-                  [-x[1], x[0],  0]])
+    M = np.array([[0, -x[2], x[1]], [x[2], 0, -x[0]], [-x[1], x[0], 0]])
     return M
 
 

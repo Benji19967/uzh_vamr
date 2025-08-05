@@ -10,13 +10,31 @@ def cropProblem(hidden_state, observations, ground_truth, cropped_num_frames):
     for i in range(cropped_num_frames):
         num_observations = int(observations[observation_i])
         if i == (cropped_num_frames - 1):
-            cropped_num_landmarks = int(observations[observation_i+1+num_observations*2:observation_i+num_observations*3+1].max())
+            cropped_num_landmarks = int(
+                observations[
+                    observation_i
+                    + 1
+                    + num_observations * 2 : observation_i
+                    + num_observations * 3
+                    + 1
+                ].max()
+            )
         observation_i = observation_i + num_observations * 3 + 1
 
-    cropped_hidden_state = np.concatenate([hidden_state[:6*cropped_num_frames],
-                                           hidden_state[6*num_frames:6*num_frames+3*cropped_num_landmarks]], axis=0)
-    cropped_observations = np.concatenate([np.asarray([cropped_num_frames, cropped_num_landmarks]),
-                                           observations[2:observation_i]], axis=0)
+    cropped_hidden_state = np.concatenate(
+        [
+            hidden_state[: 6 * cropped_num_frames],
+            hidden_state[6 * num_frames : 6 * num_frames + 3 * cropped_num_landmarks],
+        ],
+        axis=0,
+    )
+    cropped_observations = np.concatenate(
+        [
+            np.asarray([cropped_num_frames, cropped_num_landmarks]),
+            observations[2:observation_i],
+        ],
+        axis=0,
+    )
     cropped_ground_truth = ground_truth[:, :cropped_num_frames]
 
     return cropped_hidden_state, cropped_observations, cropped_ground_truth

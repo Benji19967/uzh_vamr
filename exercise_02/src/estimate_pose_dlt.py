@@ -41,7 +41,7 @@ def estimatePoseDLT(p_P, p_W, K):
     that maps points from the world frame to the camera frame
     """
     num_points = p_P.shape[1]
-
+ 
     # Convert 2D to normalized coordinates (focal length=1 , origin at center of image)
     p_P_hom = np.r_[p_P, np.ones((1, num_points))]
     p_N_hom = np.linalg.inv(K) @ p_P_hom

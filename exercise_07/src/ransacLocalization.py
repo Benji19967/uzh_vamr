@@ -1,8 +1,4 @@
-import sys
-
-import cv2
 import numpy as np
-
 from code_previous_exercises.estimate_pose_dlt import estimatePoseDLT
 from code_previous_exercises.projectPoints import projectPoints
 
@@ -33,6 +29,8 @@ def ransacLocalization(
         - max_num_inliers_history
         - num_iteration_history
     """
+    # TODO: compare with provided solution
+
     num_matched_keypoints = matched_query_keypoints.shape[1]
     # Initialize RANSAC
     best_inlier_mask = np.zeros(num_matched_keypoints)
@@ -43,9 +41,6 @@ def ransacLocalization(
     max_num_inliers_history = []
     num_iteration_history = []
     max_num_inliers = 0
-
-    # (2xN)
-    projected_points = projectPoints(corresponding_landmarks.T, K).T
 
     # RANSAC
     for _ in range(NUM_ITERATIONS):

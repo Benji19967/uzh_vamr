@@ -30,12 +30,14 @@ def ransacLocalization(
         - num_iteration_history
     """
     # TODO: compare with provided solution
+    #   - Add P3P
+    #   - Maybe: add min inlier count
 
     num_matched_keypoints = matched_query_keypoints.shape[1]
     # Initialize RANSAC
     best_inlier_mask = np.zeros(num_matched_keypoints)
 
-    # (row, col) to (u, v)
+    # (row, col) to (u, v), or (y, x) to (x, y)
     matched_query_keypoints = np.flip(matched_query_keypoints, axis=0)
 
     max_num_inliers_history = []

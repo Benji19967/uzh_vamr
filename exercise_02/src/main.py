@@ -4,11 +4,12 @@ import time
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.spatial.transform import Rotation
+
 from draw_camera import drawCamera
 from estimate_pose_dlt import estimatePoseDLT
 from plot_trajectory_3D import plotTrajectory3D
 from reproject_points import reprojectPoints
-from scipy.spatial.transform import Rotation
 
 
 def main():

@@ -1,14 +1,13 @@
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.lines import Line2D
-
 from code_previous_exercises.describeKeypoints import describeKeypoints
 from code_previous_exercises.draw_camera import drawCamera
 from code_previous_exercises.harris import harris
 from code_previous_exercises.matchDescriptors import matchDescriptors
 from code_previous_exercises.plotMatches import plotMatches
 from code_previous_exercises.selectKeypoints import selectKeypoints
+from matplotlib.lines import Line2D
 from parabolaRansac import parabolaRansac
 from ransacLocalization import ransacLocalization
 
